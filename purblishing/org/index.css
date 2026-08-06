@@ -1,0 +1,332 @@
+/* =========================================
+   모여라 - index.css (메인 화면)
+   ========================================= */
+
+#screen-index .header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px 8px;
+}
+
+#screen-index .header__logo {
+  height: 90px;
+  margin: -20px 0;
+  display: block;
+}
+
+#screen-index .header__bell {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__bell-badge {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  background: #FF3B30;
+  border-radius: 50%;
+  border: 1px solid var(--color-white);
+}
+
+/* 인트로 */
+.intro {
+  padding: 10px 20px 20px;
+}
+
+.intro__title {
+  font-size: 34px;
+  line-height: 1.28;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.intro__subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-text-sub);
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+/* 나의 활동 (아바타 리스트) */
+.friends-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 4px 20px 0;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.friends-row::-webkit-scrollbar {
+  display: none;
+}
+
+.friend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.friend-item:hover {
+  transform: translateY(-2px);
+}
+
+.friend-item:active {
+  transform: scale(0.94);
+}
+
+.friend-item__avatar-wrap {
+  position: relative;
+  width: 52px;
+  height: 52px;
+}
+
+.friend-item__avatar-wrap .avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-white);
+  box-shadow: 0 0 0 2px var(--ring-color, var(--color-yellow));
+  box-sizing: border-box;
+}
+
+.friend-item__count {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+}
+
+.friend-item__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: 2px;
+  letter-spacing: -0.3px;
+}
+
+.friend-item--add .friend-item__avatar-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-bg-card);
+  border: 1.5px solid #DDD6C8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 300;
+  color: #B2A796;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+/* 취향 저격 활동 */
+.taste-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.taste-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--color-black);
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.taste-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.taste-card:active {
+  transform: scale(0.97);
+}
+
+.taste-card--main {
+  grid-row: span 2;
+  background: var(--color-yellow-dark);
+  min-height: 296px;
+}
+
+.taste-card--pink {
+  background: var(--color-pink);
+  color: var(--color-white);
+}
+
+.taste-card--blue {
+  background: var(--color-blue);
+}
+
+/* 카드 배경 블롭 장식 */
+.taste-card::before,
+.taste-card::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.taste-card--main::before {
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.28);
+  left: 8px;
+  bottom: 70px;
+}
+
+.taste-card--main::after {
+  width: 90px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.22);
+  right: -10px;
+  bottom: 30px;
+}
+
+.taste-card--pink::before {
+  width: 110px;
+  height: 110px;
+  background: rgba(255, 255, 255, 0.22);
+  left: -20px;
+  bottom: -30px;
+}
+
+.taste-card--blue::before {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.3);
+  right: -20px;
+  bottom: -25px;
+}
+
+.taste-card__name {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.taste-card__date {
+  margin-top: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.taste-card__arrow {
+  align-self: flex-start;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--color-black);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+/* 친구들과 함께하는 이벤트 */
+.section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.event-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.event-item:hover {
+  background-color: #FAF9F6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+.event-item:active {
+  transform: scale(0.98);
+}
+
+.event-item__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+  background: #F4EEE2;
+}
+
+.event-item__text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.event-item__chevron {
+  color: var(--color-text-light);
+  font-size: 16px;
+}
+
+/* CTA 카드 */
+.cta-card {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px;
+  border: 1.5px dashed var(--color-border);
+  background: var(--color-bg-card);
+}
+
+.cta-card__text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.cta-card__btn {
+  padding: 10px 16px;
+  font-size: 12px;
+  white-space: nowrap;
+}

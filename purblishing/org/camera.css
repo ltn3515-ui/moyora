@@ -1,0 +1,188 @@
+/* ==========================================================================
+   모여라 - camera.css (영수증 QR 카메라 모달 전용)
+   calculate.html 위에 뜨는 오버레이 모달로 가정하고 구현
+   ========================================================================== */
+
+.camera-screen {
+  position: relative;
+  background: rgba(0, 0, 0, 0.5); /* Dimmed background */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-5);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 배경에 살짝 보이는 상위 화면(정산 관리) 헤더 - 모달이 뜨기 전 맥락만 보여준다 */
+.camera-screen .header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 18px var(--space-4) 14px;
+  opacity: 0.25;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.camera-screen .header__logo {
+  height: auto;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-white);
+  letter-spacing: -0.2px;
+}
+
+.camera-screen .app-header__icon-btn {
+  color: var(--color-white);
+}
+
+/* 모달 시트 */
+.camera-modal {
+  position: relative;
+  z-index: 2;
+  margin: auto 0;
+  background: var(--color-bg-card);
+  border-radius: 32px; /* Rounded all around */
+  padding: 24px 24px 0 24px; /* bottom padding is 0 to let the brand strip touch the bottom */
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.camera-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.camera-modal__title {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.camera-modal__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-round);
+  color: var(--color-text);
+  margin-right: calc(var(--space-2) * -1);
+}
+
+/* 카메라 프리뷰 (실제 서비스에서는 getUserMedia 영상이 들어갈 자리) */
+.camera-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.15 / 1;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #000;
+}
+
+.camera-preview__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.scan-bracket {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 3.5px solid #FFBE1A; /* thick yellow border */
+  border-radius: 4px;
+}
+
+.scan-bracket--tl { top: 18px; left: 18px; }
+.scan-bracket--tr { top: 18px; right: 18px; }
+.scan-bracket--bl { bottom: 18px; left: 18px; }
+.scan-bracket--br { bottom: 18px; right: 18px; }
+
+/* 안내 문구 */
+.camera-guide {
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+/* 손전등 토글 */
+.flashlight-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin: var(--space-4) auto 0;
+  border-radius: var(--radius-round);
+  background: #F0F0F2;
+  color: #1C1C1E;
+  transition: background 0.15s ease, color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.flashlight-btn.is-on {
+  background: var(--color-yellow);
+  color: var(--color-black);
+}
+
+/* 직접 입력 버튼 */
+.camera-modal__manual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px var(--space-4);
+  background: #1C1C1E;
+  color: var(--color-white);
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: var(--radius-xl);
+  border: none;
+  gap: var(--space-2);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(28, 28, 30, 0.15);
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.camera-modal__manual:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* 도움말 링크 */
+.camera-modal__help {
+  display: block;
+  margin-top: var(--space-4);
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-sub);
+}
+
+/* 하단 브랜드 컬러 스트립 */
+.brand-strip {
+  display: flex;
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-top: auto;
+  height: 8px;
+  flex-shrink: 0;
+}
+
+.brand-strip span {
+  flex: 1;
+}
+
+.brand-strip span:nth-child(1) { background: var(--color-yellow); }
+.brand-strip span:nth-child(2) { background: var(--color-pink); }
+.brand-strip span:nth-child(3) { background: var(--color-blue); }

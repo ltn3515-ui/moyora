@@ -1,0 +1,76 @@
+/* =========================================
+   모여라 - splash.css (스플래시 화면)
+   ========================================= */
+
+#screen-splash {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  padding: 0;
+}
+
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: splash-in 0.7s ease forwards;
+}
+
+.splash__logo {
+  height: 120px;
+  animation: splash-pulse 1.8s ease-in-out infinite;
+}
+
+.splash__tagline {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-sub);
+  letter-spacing: -0.2px;
+}
+
+@keyframes splash-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes splash-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .splash__logo {
+    animation: none;
+  }
+}
+
+/* 화면 종료(페이드 아웃) */
+#screen-splash.fade-out {
+  animation: splash-fade-out 0.35s ease forwards;
+}
+
+@keyframes splash-fade-out {
+  to {
+    opacity: 0;
+  }
+}

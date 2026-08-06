@@ -1,0 +1,343 @@
+/* 헤더 */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px 8px;
+}
+
+.header__back {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.header__title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #7A5C29;
+  text-align: center;
+}
+
+.header__bell {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__bell-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  background: #FF3B30;
+  border-radius: 50%;
+  border: 1px solid var(--color-white);
+}
+
+/* 친구 검색 입력창 */
+.search-bar {
+  margin: 6px 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-round);
+  background: var(--color-bg-card);
+}
+
+.search-bar__icon {
+  flex-shrink: 0;
+  color: var(--color-text-sub);
+  display: flex;
+  align-items: center;
+}
+
+.search-bar__input {
+  flex: 1;
+  width: 100%;
+  font-size: 14px;
+  color: var(--color-text);
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.search-bar__input::placeholder {
+  color: var(--color-text-sub);
+}
+
+/* 나의 프로필 카드 */
+.profile-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 24px 20px 28px;
+  padding: 20px 24px;
+  background: var(--color-yellow);
+  border-radius: var(--radius-lg);
+}
+
+.profile-card__avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 3px solid var(--color-white);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-card__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.profile-card__status {
+  font-size: 13px;
+  color: rgba(38, 38, 44, 0.75);
+  font-weight: 600;
+}
+
+.profile-card__edit {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--color-text);
+}
+
+/* 즐겨찾기 */
+.favorites {
+  display: flex;
+  gap: 26px;
+  overflow-x: auto;
+  padding: 16px 20px 0;
+  scrollbar-width: none;
+}
+
+.favorites::-webkit-scrollbar {
+  display: none;
+}
+
+.favorite-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.favorite-item__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--color-white);
+  box-shadow: 0 0 0 2px var(--ring-color, #DDD6C8);
+  background: var(--color-white) !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-item__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favorite-item__avatar--add {
+  background: transparent;
+  border: 1.5px dashed #C5BCAD;
+  color: #B2A796;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.favorite-item__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* 친구 리스트 */
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 16px;
+}
+
+.friend-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s ease;
+}
+
+.friend-item:hover {
+  background-color: rgba(254, 221, 19, 0.06);
+}
+
+.friend-item:active {
+  transform: scale(0.99);
+}
+
+.friend-item::after {
+  content: "메세지 보내기";
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%) scale(0.9);
+  background: var(--color-yellow);
+  color: var(--color-gold-text, #85600F);
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 800;
+  border-radius: var(--radius-round);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(254, 221, 19, 0.2);
+  z-index: 10;
+}
+
+.friend-item:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.friend-item:last-child {
+  border-bottom: none;
+}
+
+.friend-item__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white) !important;
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+
+.friend-item__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.friend-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.friend-item__name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.friend-item__status {
+  font-size: 13px;
+  color: var(--color-text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-item__badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text);
+  background: var(--color-pink-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-round);
+}
+
+/* 새로운 친구 탐색 배너 */
+.discover-banner {
+  position: relative;
+  margin: var(--space-6) var(--space-4) 0;
+  padding: var(--space-5);
+  background: var(--color-pink);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.discover-banner__sparkle {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  color: var(--color-yellow);
+}
+
+.discover-banner__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: var(--space-1);
+}
+
+.discover-banner__desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.4;
+  margin-bottom: var(--space-4);
+  max-width: 220px;
+}
+
+/* 친구 추가 플로팅 버튼 (하단 네비 위, 가운데) */
+.friends-fab {
+  bottom: calc(var(--bottom-nav-height) + var(--space-4));
+}

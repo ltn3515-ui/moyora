@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>모여라 - 대표 계좌 관리</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="account.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="screen active account-screen">
+
+      <!-- 상단 헤더 -->
+      <header class="app-header">
+        <button type="button" class="app-header__icon-btn" id="backBtn" aria-label="뒤로가기">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 5-7 7 7 7" />
+          </svg>
+        </button>
+        <h1 class="app-header__title">대표 계좌 관리</h1>
+        <span></span>
+      </header>
+
+      <!-- 안내 문구 -->
+      <section class="section">
+        <div class="account-intro">
+          <span class="account-intro__icon" id="introIcon"></span>
+          <p class="account-intro__text">정산금을 받을<br>계좌를 등록해 주세요</p>
+        </div>
+      </section>
+
+      <!-- 현재 등록된 계좌 -->
+      <section class="section" style="margin-top: var(--space-5);">
+        <div class="current-account-card">
+          <span class="current-account-card__glow" aria-hidden="true"></span>
+          <div class="current-account-card__info-row">
+            <div class="current-account-card__info-left">
+              <span class="current-account-card__icon-wrap" id="cardIconSlot"></span>
+              <div class="current-account-card__text-wrap">
+                <span class="current-account-card__label">현재 등록된 계좌</span>
+                <div class="current-account-card__bank" id="currentBankName">국민은행</div>
+              </div>
+            </div>
+            <button type="button" class="current-account-card__change-btn" id="changeBtn">변경</button>
+          </div>
+          <div class="current-account-card__number-box">
+            <span class="current-account-card__number-icon" id="numberIconSlot"></span>
+            <span class="current-account-card__number" id="currentAccountNumber"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 계좌 등록 폼 -->
+      <section class="section">
+        <div class="account-form__group">
+          <label class="account-form__label" for="bankSelect">은행 선택</label>
+          <div class="account-select-wrap">
+            <select class="account-select" id="bankSelect"></select>
+            <span id="selectChevron" class="account-select-chevron"></span>
+          </div>
+        </div>
+
+        <div class="account-form__group">
+          <label class="account-form__label" for="accountNumberInput">계좌번호</label>
+          <div class="account-input-row">
+            <input type="text" inputmode="numeric" class="account-input" id="accountNumberInput"
+              placeholder="계좌번호를 입력해 주세요">
+            <button type="button" class="btn account-verify-btn" id="verifyBtn" disabled>계좌 실명 확인</button>
+          </div>
+        </div>
+
+        <div class="account-form__group">
+          <label class="account-form__label" for="holderNameInput">예금주</label>
+          <input type="text" class="account-input" id="holderNameInput" placeholder="이름을 입력해 주세요">
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 저장하기 (하단 고정) -->
+    <div class="account-save-bar">
+      <button type="button" class="btn account-save-btn" id="saveBtn">
+        저장하기 <span id="saveCheckIcon"></span>
+      </button>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="account.js"></script>
+</body>
+</html>

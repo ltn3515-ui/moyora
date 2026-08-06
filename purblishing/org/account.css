@@ -1,0 +1,349 @@
+/* ==========================================================================
+   모여라 - account.css
+   [대표 계좌 관리] 화면 전용 스타일
+   ========================================================================== */
+
+:root {
+  --color-gold-text: #85600F;
+  --color-intro-bg: #FEDD13;
+  --color-blue-bg: #CDE7F5;
+  --color-blue-icon: #4A85A4;
+  --color-change-btn-border: #DCD8D0;
+  --color-change-btn-text: #8A8A93;
+  --color-input-border: #F0EAE0;
+  --color-placeholder-gold: #C4B9A2;
+  --color-label-brown: #5C5243;
+}
+
+.account-screen {
+  background: var(--color-bg);
+  padding-bottom: calc(96px + var(--space-4));
+}
+
+/* ---------------- 상단 헤더 오버라이드 ---------------- */
+
+.account-screen .app-header {
+  background: var(--color-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--space-4);
+}
+
+.account-screen .app-header__title {
+  color: var(--color-gold-text);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.account-screen .app-header__icon-btn {
+  color: var(--color-gold-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+/* ---------------- 안내 문구 ---------------- */
+
+.account-intro {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.account-intro__icon {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--color-intro-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold-text);
+}
+
+.account-intro__text {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.45;
+}
+
+/* ---------------- 현재 등록된 계좌 카드 ---------------- */
+
+.current-account-card {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 28px;
+  background: var(--color-bg-card);
+  box-shadow: 0 8px 30px rgba(38, 38, 44, 0.04);
+  border: 1.5px solid rgba(240, 234, 224, 0.4);
+}
+
+.current-account-card__glow {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 145, 188, 0.35) 0%, rgba(244, 145, 188, 0) 70%);
+  pointer-events: none;
+}
+
+.current-account-card__info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.current-account-card__info-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.current-account-card__icon-wrap {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-blue-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-blue-icon);
+}
+
+.current-account-card__text-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.current-account-card__label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--color-text-sub);
+}
+
+.current-account-card__bank {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.current-account-card__change-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-change-btn-border);
+  background: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-change-btn-text);
+  transition: background 0.2s, transform 0.15s ease;
+}
+
+.current-account-card__change-btn:active {
+  background: #F8F7F4;
+  transform: scale(0.97);
+}
+
+/* ---------------- 카드 내 계좌번호 박스 ---------------- */
+
+.current-account-card__number-box {
+  margin-top: 16px;
+  padding: 14px 20px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-input-border);
+  background: #FFFDF9;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.current-account-card__number-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-gold-text);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--color-gold-text);
+  padding: 1px 4px;
+  line-height: 1;
+}
+
+.current-account-card__number {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: 0.5px;
+}
+
+/* ---------------- 폼 ---------------- */
+
+.account-form__group {
+  margin-top: var(--space-5);
+}
+
+.account-form__label {
+  display: block;
+  margin-bottom: 8px;
+  margin-left: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-label-brown);
+}
+
+.account-select-wrap {
+  position: relative;
+}
+
+.account-select {
+  width: 100%;
+  appearance: none;
+  padding: 16px 20px;
+  padding-right: 44px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-input-border);
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-gold-text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.account-select:focus {
+  border-color: var(--color-gold-text);
+}
+
+.account-select:invalid {
+  color: var(--color-placeholder-gold);
+}
+
+.account-select-chevron {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gold-text);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.account-input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.account-input {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-input-border);
+  background: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.account-input:focus {
+  border-color: var(--color-gold-text);
+}
+
+.account-input::placeholder {
+  color: var(--color-placeholder-gold);
+  font-weight: 600;
+}
+
+.account-verify-btn {
+  flex-shrink: 0;
+  background: #1C1C1E;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 16px 24px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.15s ease;
+}
+
+.account-verify-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.account-verify-btn:disabled {
+  opacity: 0.4;
+}
+
+.account-verify-btn.is-verified {
+  background: var(--color-green);
+}
+
+/* ---------------- 저장하기 (하단 고정) ---------------- */
+
+.account-save-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-width);
+  padding: var(--space-4) var(--space-4) calc(var(--space-4) + 8px);
+  background: linear-gradient(to top, var(--color-bg) 70%, rgba(255, 251, 243, 0));
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+}
+
+.account-save-btn {
+  width: 100%;
+  height: 56px;
+  gap: 8px;
+  background: var(--color-yellow);
+  color: var(--color-gold-text);
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 800;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(254, 221, 19, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.account-save-btn #saveCheckIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-save-btn:active {
+  transform: scale(0.98);
+}
+
+.account-save-btn:disabled {
+  opacity: 0.5;
+}

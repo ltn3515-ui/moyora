@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>모여라 - 저장된 순간들</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="memory.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="screen active memory-screen">
+
+      <!-- 배경(뒤에 깔리는 화면 - profile.html 위에 뜨는 오버레이 모달임을 표현) -->
+      <div class="memory-backdrop" id="memoryBackdrop">
+        <div class="memory-backdrop__header">Moyora</div>
+        <span class="memory-backdrop__dim" aria-hidden="true"></span>
+      </div>
+
+      <!-- 저장된 순간들 모달 시트 -->
+      <div class="memory-sheet" role="dialog" aria-modal="true" aria-label="저장된 순간들">
+        <div class="memory-sheet__head">
+          <h1 class="memory-sheet__title"><span id="memoryTitleIcon"></span> 저장된 순간들</h1>
+          <button type="button" class="memory-sheet__close" id="memoryCloseBtn" aria-label="닫기">
+            <span id="memoryCloseIcon"></span>
+          </button>
+        </div>
+
+        <div class="memory-tabs" id="memoryTabs">
+          <button type="button" class="memory-tab is-active" data-filter="all">전체</button>
+          <button type="button" class="memory-tab memory-tab--2026" data-filter="2026">2026</button>
+          <button type="button" class="memory-tab memory-tab--2025" data-filter="2025">2025</button>
+          <button type="button" class="memory-tab memory-tab--favorite" data-filter="favorite">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8L12 17.8 5.9 21l1.5-6.8-5.2-4.7 6.9-.7L12 2.5Z"/></svg> 즐겨찾기
+          </button>
+          <button type="button" class="memory-tab memory-tab--add" id="memoryAddBtn" aria-label="사진 추가">
+            <span id="memoryAddIcon"></span>
+            <span class="memory-tab--add__text">사진추가</span>
+          </button>
+        </div>
+
+        <div class="memory-grid" id="memoryGrid">
+          <!-- 한강 피크닉 (2026, pink) -->
+          <div class="memory-card memory-card--pink" data-year="2026">
+            <div class="memory-card__photo-wrap">
+              <img src="picnic.png" alt="한강 피크닉" loading="lazy">
+            </div>
+            <div class="memory-card__date">2026.05.12</div>
+            <div class="memory-card__title">한강 피크닉</div>
+          </div>
+
+          <!-- 홍대 맛집 탐방 (2026, yellow) -->
+          <div class="memory-card memory-card--yellow" data-year="2026">
+            <div class="memory-card__photo-wrap">
+              <img src="cafe.png" alt="홍대 맛집 탐방" loading="lazy">
+            </div>
+            <div class="memory-card__date">2026.04.28</div>
+            <div class="memory-card__title">홍대 맛집 탐방</div>
+          </div>
+
+          <!-- 봄바람 페스티벌 (2025, blue) -->
+          <div class="memory-card memory-card--blue" data-year="2025">
+            <div class="memory-card__photo-wrap">
+              <img src="festival.png" alt="봄바람 페스티벌" loading="lazy">
+            </div>
+            <div class="memory-card__date">2025.03.15</div>
+            <div class="memory-card__title">봄바람 페스티벌</div>
+          </div>
+
+          <!-- 다꾸 모임 (2025, yellow) -->
+          <div class="memory-card memory-card--yellow" data-year="2025">
+            <div class="memory-card__photo-wrap">
+              <img src="journaling.png" alt="다꾸 모임" loading="lazy">
+            </div>
+            <div class="memory-card__date">2025.02.01</div>
+            <div class="memory-card__title">다꾸 모임</div>
+          </div>
+
+          <!-- 서울 야경 (2025, pink, 즐겨찾기) -->
+          <div class="memory-card memory-card--pink" data-year="2025" data-favorite="true">
+            <div class="memory-card__photo-wrap">
+              <img src="namsan.png" alt="서울 야경" loading="lazy">
+              <span class="memory-card__fav" aria-label="즐겨찾기">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8L12 17.8 5.9 21l1.5-6.8-5.2-4.7 6.9-.7L12 2.5Z"/></svg>
+              </span>
+            </div>
+            <div class="memory-card__date">2025.01.10</div>
+            <div class="memory-card__title">서울 야경</div>
+          </div>
+
+          <!-- 보드게임 모임 (2026, blue) -->
+          <div class="memory-card memory-card--blue" data-year="2026">
+            <div class="memory-card__photo-wrap">
+              <img src="boardgame.png" alt="보드게임 모임" loading="lazy">
+            </div>
+            <div class="memory-card__date">2026.01.05</div>
+            <div class="memory-card__title">보드게임 모임</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="memory.js"></script>
+</body>
+
+</html>

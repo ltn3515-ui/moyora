@@ -1,0 +1,506 @@
+/* =========================================
+   모여라 - common.css
+   공통 변수 / 리셋 / 공통 컴포넌트 스타일
+   ========================================= */
+
+:root {
+  /* Brand Colors */
+  --color-yellow: #FEDD13;
+  --color-yellow-dark: #F2CE00;
+  --color-yellow-light: #FFF1A8;
+  --color-pink: #F491BC;
+  --color-pink-light: #FBD3E3;
+  --color-blue: #8FC7E8;
+  --color-blue-light: #CDE7F5;
+  --color-green: #8FCB9B;
+  --color-green-light: #D8F0DD;
+  --color-cream: #D8B98B;
+  --color-cream-light: #F3E4CE;
+  --color-gray: #B7B0A3;
+  --color-gray-light: #E9E6DE;
+
+  /* Neutral / Text */
+  --color-text: #26262C;
+  --color-text-sub: #8A8A93;
+  --color-text-light: #B4B4BC;
+  --color-white: #FFFFFF;
+  --color-bg: #FFFBF3;
+  --color-bg-card: #FFFFFF;
+  --color-border: #F0EAE0;
+  --color-black: #1C1C1E;
+
+  /* Layout */
+  --max-width: 480px;
+  --header-height: 56px;
+  --bottom-nav-height: 72px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-round: 999px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 20px;
+  --space-5: 24px;
+  --space-6: 28px;
+  --space-7: 32px;
+
+  /* Shadow */
+  --shadow-card: 0 4px 14px rgba(38, 38, 44, 0.06);
+  --shadow-float: 0 8px 20px rgba(38, 38, 44, 0.18);
+
+  /* Font */
+  --font-base: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Malgun Gothic', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-base);
+  background: #E6DFD3;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+svg {
+  display: block;
+}
+
+/* ==========================================================================
+   App Shell : 모바일 우선, 480px 고정 폭
+   ========================================================================== */
+
+.app {
+  position: relative;
+  max-width: var(--max-width);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--color-bg);
+  overflow-x: hidden;
+  box-shadow: 0 0 32px rgba(38, 38, 44, 0.15);
+  border-left: 1px solid rgba(38, 38, 44, 0.1);
+  border-right: 1px solid rgba(38, 38, 44, 0.1);
+}
+
+/* 화면 단위. 여러 화면을 한 셸에 넣고 JS로 토글할 때는 .active를 붙여서 노출한다.
+   (지금처럼 화면별 html 파일을 독립적으로 열 때는 각 파일의 .screen에 .active를 함께 준다) */
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-4));
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ==========================================================================
+   공통 헤더 (로고형 - 메인 등 단순 헤더용)
+   ========================================================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 20px 8px;
+}
+
+.header__logo {
+  height: 22px;
+}
+
+/* 화면 타이틀형 헤더 (뒤로가기 + 타이틀 + 알림) - friends/profile 등에서 사용 */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  height: var(--header-height);
+  padding: 0 var(--space-4);
+  background: var(--color-bg);
+}
+
+.app-header__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-round);
+  color: var(--color-text);
+}
+
+.app-header__icon-btn--right {
+  justify-self: end;
+  position: relative;
+}
+
+.app-header__title {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.app-header__badge-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  background: var(--color-pink);
+  border: 1.5px solid var(--color-bg);
+}
+
+/* ==========================================================================
+   카드 / 섹션 공통
+   ========================================================================== */
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.section {
+  padding: 0 var(--space-4);
+}
+
+.section + .section {
+  margin-top: var(--space-6);
+}
+
+.section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.section__title {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.section__link {
+  font-size: 12px;
+  color: var(--color-text-sub);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   아바타
+   ========================================================================== */
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  font-weight: 700;
+  color: var(--color-text);
+  background: linear-gradient(160deg, #EDE3D3, #DCCBAE);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.header__logo-link {
+  display: block;
+  text-decoration: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   버튼
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-round);
+  font-weight: 700;
+  font-size: 14px;
+  padding: var(--space-3) var(--space-5);
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+/* 플로팅 액션 버튼 (기본값 - 화면별로 위치를 재정의해서 사용) */
+.btn-floating {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 92px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--color-black);
+  color: var(--color-white);
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-float);
+  z-index: 50;
+}
+
+/* 범용 마우스 호버 툴팁 */
+[data-tooltip] {
+  position: relative;
+}
+
+.btn-floating[data-tooltip] {
+  position: fixed;
+}
+
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  padding: 6px 12px;
+  background: rgba(38, 38, 44, 0.95);
+  color: #FFF;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+[data-tooltip]::after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: rgba(38, 38, 44, 0.95) transparent transparent;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 100;
+}
+
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+/* ==========================================================================
+   하단 네비게이션
+   실제 디자인 시안이 화면 폭 전체에 붙는 도킹형 바 형태라 그 형태를 기준으로 유지했다.
+   (동그랗게 뜬 플로팅 pill 형태를 원하시면 알려주시면 교체하겠습니다)
+   ========================================================================== */
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: calc(var(--max-width) - 32px);
+  height: 64px;
+  background: #2D2D2F;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px;
+  z-index: 40;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.bottom-nav__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.bottom-nav__item.is-active,
+.bottom-nav__item.active {
+  color: #FFFFFF;
+}
+
+/* 중앙 강조 버튼 (검색) */
+.bottom-nav__center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+}
+
+.bottom-nav__center-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-yellow);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(254, 221, 19, 0.3);
+}
+
+.bottom-nav__center-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.bottom-nav__center-btn svg * {
+  stroke: var(--color-white) !important;
+  stroke-width: 2.2 !important;
+}
+
+.bottom-nav__item--main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+}
+
+.bottom-nav__main-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-yellow);
+  color: var(--color-white);
+  box-shadow: 0 4px 10px rgba(254, 221, 19, 0.3);
+  border: none;
+  transform: none;
+}
+
+.bottom-nav__main-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.bottom-nav__main-btn svg * {
+  stroke: var(--color-white) !important;
+  stroke-width: 2.2 !important;
+}
+
+.bottom-nav__item--main span:not(.bottom-nav__main-btn) {
+  display: none !important;
+}
+
+/* ==========================================================================
+   뱃지 (알림 카운트 등 범용)
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: var(--radius-round);
+  background: var(--color-yellow);
+  color: var(--color-black);
+  font-size: 11px;
+  font-weight: 800;
+  border: 2px solid var(--color-white);
+}
+
+/* ==========================================================================
+   Utility
+   ========================================================================== */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -1,0 +1,374 @@
+/* ==========================================================================
+   모여라 - profile.css
+   [내 정보] 화면 전용 스타일
+   ========================================================================== */
+
+.profile-screen {
+  background: var(--color-bg);
+}
+
+/* 헤더 */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px 8px;
+}
+
+.header__back {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.header__logo {
+  height: 90px;
+  margin: -20px 0;
+  display: block;
+}
+
+.header__bell {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__bell-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  background: #FF3B30;
+  border-radius: 50%;
+  border: 1px solid var(--color-white);
+}
+
+/* ---------------- 프로필 히어로 (사진/이름/뱃지) ---------------- */
+
+.profile-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2) var(--space-4) var(--space-6);
+  overflow: hidden;
+}
+
+.profile-hero__blob {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.profile-hero__blob--yellow {
+  top: -18px;
+  left: -38px;
+  width: 130px;
+  height: 130px;
+  background: var(--color-yellow-light);
+  border-radius: 61% 39% 45% 55% / 55% 40% 60% 45%;
+}
+
+.profile-hero__blob--pink {
+  top: 40px;
+  right: -46px;
+  width: 130px;
+  height: 130px;
+  background: var(--color-pink-light);
+  border-radius: 42% 58% 63% 37% / 41% 51% 49% 59%;
+}
+
+.profile-hero__avatar-wrap {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-4);
+}
+
+.profile-hero__avatar {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(160deg, #EDE3D3, #DCCBAE);
+  box-shadow: var(--shadow-card);
+}
+
+.profile-hero__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-hero__edit-btn {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-black);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--color-bg);
+}
+
+.profile-hero__name {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-3);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.profile-hero__role {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-2);
+  padding: 5px 14px;
+  border-radius: var(--radius-round);
+  background: var(--color-blue-light);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ---------------- 주간 활동 게이지 카드 ---------------- */
+
+.weekly-card {
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(155deg, var(--color-yellow), var(--color-yellow-dark));
+}
+
+.weekly-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.weekly-card__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.weekly-card__percent {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-black);
+  letter-spacing: -0.5px;
+}
+
+.weekly-card__track {
+  margin-top: var(--space-3);
+  height: 12px;
+  border-radius: var(--radius-round);
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.weekly-card__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: var(--radius-round);
+  background: #4B4A2B;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.weekly-card__caption {
+  margin-top: var(--space-3);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(38, 38, 44, 0.75);
+}
+
+/* ---------------- 건강 / 수면 카드 (2분할) ---------------- */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.stat-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-card--health {
+  background: var(--color-blue-light);
+}
+
+.stat-card--sleep {
+  background: var(--color-pink-light);
+}
+
+.stat-card__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+}
+
+.stat-card__label {
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--color-text-sub);
+  font-weight: 600;
+}
+
+.stat-card__value {
+  margin-top: 2px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.3px;
+}
+
+.stat-card__unit {
+  font-size: 14px;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* ---------------- 활동 요약 (가로 스크롤) ---------------- */
+
+.activity-scroll {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  scrollbar-width: none;
+}
+
+.activity-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.activity-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 148px;
+  height: 118px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-gray-light);
+}
+
+.activity-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.activity-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 55%);
+}
+
+.activity-card__title {
+  position: absolute;
+  left: var(--space-2);
+  bottom: var(--space-2);
+  z-index: 1;
+  color: var(--color-white);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.section__head--icon-link .section__link {
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+}
+
+/* ---------------- 메뉴 리스트 ---------------- */
+
+.menu-card {
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  text-align: left;
+}
+
+.menu-item + .menu-item {
+  border-top: 1px solid var(--color-border);
+}
+
+.menu-item__icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-item__icon--purple {
+  background: #E7DFFB;
+  color: #7A5CE0;
+}
+
+.menu-item__icon--blue {
+  background: var(--color-blue-light);
+  color: #3E7FA8;
+}
+
+.menu-item__icon--orange {
+  background: #FBE3CE;
+  color: #D98A3D;
+}
+
+.menu-item__icon--message {
+  background: var(--color-white);
+  color: #8C7BF2;
+  box-shadow: 0 2px 8px rgba(140, 123, 242, 0.15);
+  border: 1px solid rgba(220, 215, 235, 0.35);
+}
+
+.menu-item__label {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.menu-item__chevron {
+  color: var(--color-text-light);
+}

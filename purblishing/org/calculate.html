@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>모여라 - 정산 관리</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="calculate.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="screen active calculate-screen">
+
+      <h1 class="calculate-title">정산 현황</h1>
+
+      <!-- 참여 현황 그래프 -->
+      <section class="section">
+        <div class="participation-card">
+          <div class="participation-card__head">
+            <div>
+              <div class="participation-card__title">참여 현황</div>
+              <div class="participation-card__subtitle">최근 24시간 실시간 트래픽</div>
+            </div>
+            <span class="participation-card__rate" id="participationTrendWrap">
+              <span class="participation-card__rate-top">
+                <span id="participationTrendIcon"></span>
+                <span id="participationRate">0%</span>
+              </span>
+              <span class="participation-card__rate-label">참여도</span>
+            </span>
+          </div>
+
+          <div class="participation-chart">
+            <div class="participation-chart__grid" id="chartGrid"></div>
+            <div class="participation-chart__svg-wrap" id="chartSvgWrap"></div>
+            <span class="participation-chart__peak" id="chartPeakLabel"></span>
+          </div>
+          <div class="participation-chart__axis" id="chartAxis"></div>
+        </div>
+      </section>
+
+      <!-- QR카메라 / 게임룸 -->
+      <section class="section" style="margin-top: var(--space-3);">
+        <div class="action-grid">
+          <button type="button" class="action-card action-card--qr" id="qrCameraBtn">
+            <span class="action-card__icon" id="qrIconSlot"></span>
+            <div class="action-card__title">QR 카메라</div>
+            <div class="action-card__desc">현장 정산 스캔</div>
+          </button>
+          <button type="button" class="action-card action-card--game" id="gameRoomBtn">
+            <span class="action-card__icon" id="gameIconSlot"></span>
+            <div class="action-card__title">게임 룸</div>
+            <div class="action-card__desc">리워드 정산 관리</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- 최근 정산 내역 -->
+      <section class="section" style="margin-top: var(--space-6);">
+        <div class="section__head">
+          <h2 class="section__title">최근 정산 내역</h2>
+          <a class="section__link" href="#" id="settlementMoreLink"
+            style="display:flex;align-items:center;gap:2px;"></a>
+        </div>
+        <div class="settlement-list" id="settlementList"></div>
+      </section>
+
+      <!-- 인사이트 카드 -->
+      <section class="section" style="margin-top: var(--space-6);">
+        <div class="insight-card">
+          <p class="insight-card__text" id="insightText"></p>
+          <button type="button" class="btn insight-card__btn" id="insightBtn"></button>
+        </div>
+      </section>
+
+      <!-- 전체 결과 공유 배너 -->
+      <section class="section" style="margin-top: var(--space-4);">
+        <div class="share-banner">
+          <div class="share-banner__row">
+            <span class="share-banner__icon" id="shareIconSlot"></span>
+            <p class="share-banner__text">영수증 내역과 결과를 이미지로 저장하여 공유해보세요!</p>
+          </div>
+          <button type="button" class="btn share-banner__btn" id="shareResultBtn">
+            <span id="shareBtnIconSlot"></span>
+            전체 결과 이미지로 공유하기
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 하단 네비게이션 -->
+    <nav class="bottom-nav" id="bottomNav"></nav>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="calculate.js"></script>
+</body>
+
+</html>

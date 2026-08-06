@@ -1,0 +1,390 @@
+/* ==========================================================================
+   모여라 - calculate.css
+   [정산 관리] 화면 전용 스타일
+   ========================================================================== */
+
+.calculate-screen {
+  background: var(--color-bg);
+}
+
+.calculate-title {
+  text-align: center;
+  padding: var(--space-5) var(--space-4) var(--space-2);
+  font-size: 24px;
+  font-weight: 800;
+  color: #7A5C29;
+  letter-spacing: -0.3px;
+}
+
+/* ---------------- 참여 현황 카드 ---------------- */
+
+.participation-card {
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(160deg, var(--color-pink), #EF7CA9);
+  color: var(--color-text);
+}
+
+.participation-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.participation-card__title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.participation-card__subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(38, 38, 44, 0.65);
+  font-weight: 600;
+}
+
+.participation-card__rate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 7px 14px;
+  border-radius: var(--radius-round);
+  background: var(--color-black);
+  color: var(--color-white);
+  white-space: nowrap;
+}
+
+.participation-card__rate-top {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.participation-card__rate-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
+.participation-chart {
+  position: relative;
+  margin-top: var(--space-5);
+}
+
+.participation-chart__grid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 130px;
+}
+
+.participation-chart__gridline {
+  border-top: 1px dashed rgba(38, 38, 44, 0.18);
+  width: 100%;
+}
+
+.participation-chart__svg-wrap {
+  position: absolute;
+  inset: 0;
+  height: 130px;
+}
+
+.participation-chart__peak {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  padding: 4px 10px;
+  border-radius: var(--radius-round);
+  background: var(--color-black);
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.participation-chart__axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2);
+}
+
+.participation-chart__axis span {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(38, 38, 44, 0.55);
+}
+
+/* ---------------- QR카메라 / 게임룸 ---------------- */
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.action-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.action-card--qr {
+  background: var(--color-yellow);
+}
+
+.action-card--qr .action-card__icon {
+  background: #7A5C29;
+  color: var(--color-white);
+}
+
+.action-card--qr .action-card__title {
+  color: #7A5C29;
+}
+
+.action-card--qr .action-card__desc {
+  color: rgba(122, 92, 41, 0.85);
+}
+
+.action-card--game {
+  background: #C4DCF2;
+}
+
+.action-card--game .action-card__icon {
+  background: #3E6D9C;
+  color: var(--color-white);
+}
+
+.action-card--game .action-card__title {
+  color: #244C75;
+}
+
+.action-card--game .action-card__desc {
+  color: rgba(36, 76, 117, 0.85);
+}
+
+.action-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-card__title {
+  margin-top: var(--space-3);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.action-card__desc {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ---------------- 최근 정산 내역 ---------------- */
+
+.settlement-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.settlement-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: transparent;
+}
+
+.settlement-item + .settlement-item {
+  border-top: 1px solid var(--color-border);
+}
+
+.settlement-item__thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-gray-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.settlement-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.settlement-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.settlement-item__title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.settlement-item__title {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.settlement-item__status {
+  padding: 3px 8px;
+  border-radius: var(--radius-round);
+  font-size: 10.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.settlement-item__status--done {
+  background: #FEF4CC;
+  color: #B58A00;
+}
+
+.settlement-item__status--pending {
+  background: #ECECEC;
+  color: #7A7A7A;
+}
+
+.settlement-item__meta {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--color-text-sub);
+  font-weight: 600;
+}
+
+.settlement-item__side {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.settlement-item__share {
+  color: var(--color-text-sub);
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settlement-item__amount {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.settlement-item__amount--positive {
+  color: #A87515;
+}
+
+/* ---------------- 인사이트 카드 ---------------- */
+
+.insight-card {
+  position: relative;
+  padding: 24px;
+  border-radius: var(--radius-xl);
+  background: #ECEBE8;
+  overflow: hidden;
+}
+
+.insight-card::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(254, 221, 19, 0.4) 0%, rgba(254, 221, 19, 0) 70%);
+  filter: blur(10px);
+}
+
+.insight-card__text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #26262C;
+  line-height: 1.6;
+}
+
+.insight-card__btn {
+  margin-top: var(--space-3);
+  background: var(--color-black);
+  color: var(--color-white);
+  border-radius: var(--radius-round);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: none;
+}
+
+/* ---------------- 공유 배너 ---------------- */
+
+.share-banner {
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: #FCEEF3;
+  border: none;
+  box-shadow: none;
+}
+
+.share-banner__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-banner__icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #FBD5E4;
+  color: #E95A8F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-banner__text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #26262C;
+  line-height: 1.5;
+}
+
+.share-banner__btn {
+  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #9D4373;
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-round);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px;
+}

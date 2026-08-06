@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>모여라 - 내 정보</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="screen active profile-screen">
+
+      <!-- 헤더 -->
+      <header class="header">
+        <button class="header__back" id="profileBackBtn" aria-label="뒤로가기">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#7A5C29" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="header__center">
+          <a href="index.html" class="header__logo-link">
+            <img class="header__logo" src="img_logo_full.png" alt="모여라">
+          </a>
+        </div>
+        <button class="header__bell" id="profileBellBtn" aria-label="알림">
+          🔔<span class="header__bell-badge"></span>
+        </button>
+      </header>
+
+      <!-- 프로필 히어로 -->
+      <section class="profile-hero">
+        <span class="profile-hero__blob profile-hero__blob--yellow"></span>
+        <span class="profile-hero__blob profile-hero__blob--pink"></span>
+
+        <div class="profile-hero__avatar-wrap">
+          <div class="profile-hero__avatar">
+            <img id="profileAvatarImg" src="" alt="프로필 사진">
+          </div>
+          <button type="button" class="profile-hero__edit-btn" id="profileEditBtn" aria-label="프로필 사진 수정">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+            </svg>
+          </button>
+        </div>
+
+        <h1 class="profile-hero__name" id="profileName"></h1>
+        <span class="profile-hero__role" id="profileRole"></span>
+      </section>
+
+      <!-- 주간 활동 게이지 -->
+      <section class="section">
+        <div class="weekly-card">
+          <div class="weekly-card__head">
+            <span class="weekly-card__label">주간 활동</span>
+            <span class="weekly-card__percent" id="weeklyPercent">0%</span>
+          </div>
+          <div class="weekly-card__track">
+            <div class="weekly-card__fill" id="weeklyFill"></div>
+          </div>
+          <p class="weekly-card__caption" id="weeklyCaption"></p>
+        </div>
+      </section>
+
+      <!-- 건강 / 수면 -->
+      <section class="section" style="margin-top: var(--space-3);">
+        <div class="stat-grid">
+          <div class="stat-card stat-card--health">
+            <span class="stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="4.5" r="1.8" />
+                <path d="m9 21 2-6-2.5-2 .5-4.5L12 7l3 1.5.5 4.5-2.5 2 2 6" />
+                <path d="m8 12-3 2" />
+                <path d="m16 12 3 2" />
+              </svg>
+            </span>
+            <div>
+              <div class="stat-card__label">건강</div>
+              <div class="stat-card__value"><span id="healthSteps">0</span><span class="stat-card__unit">걸음</span></div>
+            </div>
+          </div>
+          <div class="stat-card stat-card--sleep">
+            <span class="stat-card__icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" />
+              </svg>
+            </span>
+            <div>
+              <div class="stat-card__label">수면</div>
+              <div class="stat-card__value"><span id="sleepHours">0</span><span class="stat-card__unit">시간</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 활동 요약 -->
+      <section class="section" style="margin-top: var(--space-6);">
+        <div class="section__head section__head--icon-link">
+          <h2 class="section__title">활동 요약</h2>
+          <a class="section__link" href="#" aria-label="활동 요약 더보기">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </a>
+        </div>
+        <div class="activity-scroll" id="activityScroll"></div>
+      </section>
+
+      <!-- 메뉴 리스트 -->
+      <section class="section" style="margin-top: var(--space-6);">
+        <div class="menu-card" id="profileMenuList"></div>
+      </section>
+
+    </div>
+
+    <!-- 하단 네비게이션 -->
+    <nav class="bottom-nav" id="bottomNav"></nav>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="profile.js"></script>
+</body>
+
+</html>

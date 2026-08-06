@@ -1,0 +1,314 @@
+/* ==========================================================================
+   모여라 - search.css
+   [검색 모달] 화면 전용 스타일
+   friends.html / index.html의 검색창에서 호출되는 오버레이 모달 형태
+   ========================================================================== */
+
+.search-screen {
+  padding-bottom: 0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ---------------- 배경(뒤에 깔리는 화면) ---------------- */
+
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: #DCD5C6;
+  overflow: hidden;
+}
+
+.search-backdrop__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--space-4);
+}
+
+.search-backdrop__logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-text);
+  opacity: 0.55;
+}
+
+.search-backdrop__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  opacity: 0.55;
+}
+
+.search-backdrop__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.search-backdrop__dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 28, 30, 0.28);
+  opacity: 0;
+  animation: searchDimIn .35s ease forwards;
+}
+
+@keyframes searchDimIn {
+  to { opacity: 1; }
+}
+
+/* ---------------- 모달 시트 ---------------- */
+
+.search-sheet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  max-width: var(--max-width);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  transform: translate(-50%, 100%);
+  background: var(--color-bg);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -12px 32px rgba(38, 38, 44, 0.22);
+  padding: 10px var(--space-4) var(--space-6);
+  z-index: 10;
+  animation: searchSheetUp .38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes searchSheetUp {
+  to { transform: translate(-50%, 0); }
+}
+
+.search-sheet__handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-round);
+  background: var(--color-border);
+  margin: 0 auto var(--space-4);
+}
+
+.search-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.search-sheet__title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.search-sheet__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-gray-light);
+  color: var(--color-text);
+}
+
+/* ---------------- 검색 입력창 ---------------- */
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 13px var(--space-4);
+  border-radius: var(--radius-round);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-card);
+  margin-bottom: var(--space-5);
+}
+
+.search-input-wrap svg {
+  flex-shrink: 0;
+  color: var(--color-text-sub);
+}
+
+.search-input-wrap input {
+  flex: 1;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.search-input-wrap input::placeholder {
+  color: var(--color-text-light);
+}
+
+/* ---------------- 최근 검색어 ---------------- */
+
+.search-block {
+  margin-bottom: var(--space-6);
+}
+
+.search-block__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.search-block__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-sub);
+}
+
+.search-block__action {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-sub);
+}
+
+.search-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.search-tags:empty::after {
+  content: '최근 검색어가 없어요.';
+  font-size: 13px;
+  color: var(--color-text-light);
+}
+
+.search-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 10px 9px 16px;
+  border-radius: var(--radius-round);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.search-tag--pink { background: #FCE6EE; color: #B83E74; }
+.search-tag--pink .search-tag__remove { color: #B83E74; }
+.search-tag--blue { background: #E1F0FA; color: #336C9C; }
+.search-tag--blue .search-tag__remove { color: #336C9C; }
+.search-tag--yellow { background: #FAF3D1; color: #8F7500; }
+.search-tag--yellow .search-tag__remove { color: #8F7500; }
+.search-tag--gray { background: #EFEFEF; color: #7F7F84; }
+.search-tag--gray .search-tag__remove { color: #7F7F84; }
+
+.search-tag__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  opacity: 0.75;
+}
+
+/* ---------------- 인기 카테고리 ---------------- */
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.category-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  border: none;
+}
+
+.category-card--pink { background: var(--color-pink-light); }
+.category-card--yellow { background: var(--color-yellow); }
+.category-card--blue { background: var(--color-blue-light); }
+.category-card--gray { background: var(--color-gray-light); }
+
+.category-card__blob {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(38, 38, 44, 0.08);
+}
+
+.category-card__icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text);
+  width: auto;
+  height: auto;
+}
+
+.category-card__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.category-card__label {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* ---------------- 맞춤 활동 찾기 배너 ---------------- */
+
+.search-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: #F8F7F4;
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+.search-banner__icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(155deg, var(--color-pink), var(--color-pink-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+}
+
+.search-banner__title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.search-banner__desc {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--color-text-sub);
+  line-height: 1.5;
+}

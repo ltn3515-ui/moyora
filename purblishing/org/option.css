@@ -1,0 +1,269 @@
+/* ==========================================================================
+   모여라 - option.css (환경 설정 화면 전용)
+   ========================================================================== */
+
+.option-header {
+  grid-template-columns: 40px 1fr 40px;
+}
+
+.option-header .app-header__title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #7A5C29;
+  text-align: center;
+}
+
+/* 프로필 요약 카드 */
+.option-profile-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-2) var(--space-4) 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-yellow);
+  border-radius: var(--radius-xl);
+}
+
+.option-profile-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-bg-card);
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-profile-card__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.option-profile-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.option-profile-card__name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.option-profile-card__email {
+  font-size: 13px;
+  color: rgba(38, 38, 44, 0.65);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.option-profile-card__edit {
+  flex-shrink: 0;
+  background: var(--color-black);
+  color: var(--color-white);
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+/* 섹션 라벨 */
+.option-section__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-sub);
+  margin-bottom: var(--space-2);
+}
+
+/* 리스트 카드 (한 카드 안에 여러 항목 + 구분선) */
+.option-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-card);
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(38, 38, 44, 0.04);
+}
+
+.option-list + .option-list {
+  margin-top: var(--space-3);
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  min-height: 64px;
+}
+
+.option-list .option-item + .option-item {
+  border-top: 1px solid var(--color-border);
+}
+
+.option-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-round);
+  color: var(--color-black);
+}
+
+.option-item__icon--pink { background: var(--color-pink-light); color: #C24B7C; }
+.option-item__icon--blue { background: var(--color-blue-light); color: #3C7CA6; }
+.option-item__icon--yellow { background: var(--color-yellow-light); color: #8A6D00; }
+.option-item__icon--gray { background: var(--color-gray-light); color: #6E6656; }
+.option-item__icon--red { background: var(--color-pink-light); color: #E2574C; }
+
+.option-item__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.option-item__label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.option-item__sublabel {
+  font-size: 12.5px;
+  color: var(--color-text-sub);
+}
+
+.option-item__value {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--color-text-sub);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.option-item__value svg {
+  color: #7A5C29;
+}
+
+.option-item__select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.option-item__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-light);
+}
+
+.option-item--action {
+  cursor: pointer;
+}
+
+/* 토글 스위치 */
+.toggle-switch {
+  flex-shrink: 0;
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: var(--radius-round);
+  background: var(--color-gray-light);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.toggle-switch.is-on {
+  background: #7A5C29;
+}
+
+.toggle-switch.is-on::after {
+  transform: translateX(20px);
+}
+
+/* 앱 버전 표시 */
+.option-version {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-light);
+  margin-top: var(--space-6);
+}
+
+/* 환경설정 전용 하단 네비게이션 (4탭 - 활성 탭은 라벨까지 포함한 필 강조) */
+.option-bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: calc(var(--max-width) - 32px);
+  height: 64px;
+  background: var(--color-black);
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  z-index: 40;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.option-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 48px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.option-nav-item.is-active {
+  flex-direction: row;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-round);
+  background: var(--color-yellow);
+  color: var(--color-black);
+}
+
+.option-nav-item.is-active .option-nav-item__icon {
+  width: 18px;
+  height: 18px;
+}

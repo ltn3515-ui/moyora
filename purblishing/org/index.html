@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>모여라 - 모임과 정산을 한번에!</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <main class="screen active" id="screen-index">
+
+      <!-- 헤더 -->
+      <header class="header">
+        <div class="header__center">
+          <a href="index.html" class="header__logo-link">
+            <img class="header__logo" src="img_logo_full.png" alt="모여라">
+          </a>
+        </div>
+        <button class="header__bell" aria-label="알림">
+          🔔<span class="header__bell-badge"></span>
+        </button>
+      </header>
+
+      <!-- 인트로 -->
+      <section class="intro">
+        <h1 class="intro__title">발견하고,<br>만들고, 즐기세요</h1>
+        <p class="intro__subtitle">열심히 일하고, 즐겁게 놀아요</p>
+      </section>
+
+      <!-- 나의 활동 / 친구 아바타 -->
+      <ul class="friends-row" id="friendsRow"></ul>
+
+      <!-- 취향 저격 활동 -->
+      <section class="section">
+        <div class="section__header">
+          <h2 class="section__title">취향 저격 활동</h2>
+        </div>
+        <div class="taste-grid">
+          <div class="taste-card taste-card--main">
+            <div>
+              <div class="taste-card__name">오페라</div>
+              <div class="taste-card__date">24.04.23</div>
+            </div>
+          </div>
+          <div class="taste-card taste-card--pink">
+            <div>
+              <div class="taste-card__name">페스티벌</div>
+              <div class="taste-card__date">24.05.30</div>
+            </div>
+          </div>
+          <div class="taste-card taste-card--blue">
+            <div>
+              <div class="taste-card__name">소분 행사</div>
+              <div class="taste-card__date">24.05.10</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 친구들과 함께하는 이벤트 -->
+      <section class="section">
+        <div class="section__header">
+          <h2 class="section__title">친구들과 함께하는 이벤트</h2>
+          <button class="section__link" aria-label="더보기">⋯</button>
+        </div>
+        <div class="event-list">
+          <div class="card event-item">
+            <div class="event-item__icon">📅</div>
+            <span class="event-item__text">날짜 확인</span>
+            <span class="event-item__chevron">›</span>
+          </div>
+          <div class="card event-item">
+            <div class="event-item__icon">🎁</div>
+            <span class="event-item__text">다가오는 이벤트</span>
+            <span class="event-item__chevron">›</span>
+          </div>
+          <div class="card event-item">
+            <div class="event-item__icon"><i class="fa-solid fa-share-nodes"></i></div>
+            <span class="event-item__text">가장 많이 공유된</span>
+            <span class="event-item__chevron">›</span>
+          </div>
+        </div>
+
+        <div class="card cta-card">
+          <span class="cta-card__text">다음 이벤트를<br>고르셨나요?</span>
+          <button class="btn btn-primary cta-card__btn" id="btnStartEvent" data-tooltip="신규">시작하기 →</button>
+        </div>
+      </section>
+
+      <button class="btn-floating" id="fabAddGroup" data-tooltip="정산 현황 바로가기" aria-label="정산 현황 바로가기">
+        <i class="fa-solid fa-calculator"></i>
+      </button>
+
+      <!-- 하단 네비게이션 -->
+      <nav class="bottom-nav" id="bottomNav"></nav>
+
+    </main>
+
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

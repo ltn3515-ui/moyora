@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>모여라 | 영수증 QR 스캔</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="camera.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="screen active camera-screen">
+
+      <!-- 배경에 살짝 보이는 상위 화면(정산 관리)의 헤더 -->
+      <header class="header">
+        <span class="header__logo">Moyora</span>
+        <span style="flex:1"></span>
+        <button class="app-header__icon-btn" type="button" aria-label="알림" tabindex="-1">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8.5c0-3.6-2.7-6.5-6-6.5s-6 2.9-6 6.5c0 6-2.5 7.5-2.5 7.5h17S18 14.5 18 8.5Z" />
+            <path d="M10.5 20a1.7 1.7 0 0 0 3 0" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- 영수증 QR 스캔 모달 -->
+      <section class="camera-modal">
+        <div class="camera-modal__head">
+          <h2 class="camera-modal__title">영수증 QR 스캔</h2>
+          <button id="cameraCloseBtn" class="camera-modal__close" type="button" aria-label="닫기">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 카메라 프리뷰 영역: 실제 서비스에서는 이 자리에 getUserMedia 영상(<video>)이 들어갑니다 -->
+        <div class="camera-preview">
+          <img class="camera-preview__image" src="receipt_scan_preview.png" alt="영수증 QR 스캔 프리뷰">
+          <span class="scan-bracket scan-bracket--tl"></span>
+          <span class="scan-bracket scan-bracket--tr"></span>
+          <span class="scan-bracket scan-bracket--bl"></span>
+          <span class="scan-bracket scan-bracket--br"></span>
+        </div>
+
+        <p class="camera-guide">영수증의 QR코드를 사각형 안에<br>맞춰주세요.</p>
+
+        <button id="flashlightBtn" class="flashlight-btn" type="button" aria-label="손전등 켜기/끄기">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 2.5h6l1 4-1.6 2H9.6L8 6.5z" />
+            <path d="M8.4 8.5h7.2v3.2a4 4 0 0 1-1 2.6l-.6.7v5a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-5l-.6-.7a4 4 0 0 1-1-2.6z" />
+          </svg>
+        </button>
+
+        <button id="manualInputBtn" class="btn btn-primary camera-modal__manual" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 3.5h10.5V19l-2.6-1.7L10.3 19l-2.6-1.7-2.7 1.7z" />
+            <path d="M14.5 14.7 19 10.2l2 2-4.5 4.5-2.3.5z" />
+          </svg>
+          직접 입력
+        </button>
+
+        <a class="camera-modal__help" href="#">도움말이 필요하신가요?</a>
+
+        <div class="brand-strip">
+          <span></span><span></span><span></span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="camera.js"></script>
+</body>
+
+</html>

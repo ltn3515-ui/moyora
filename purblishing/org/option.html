@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>모여라 | 환경 설정</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="option.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="screen active">
+
+      <!-- 헤더 -->
+      <header class="app-header option-header">
+        <button class="app-header__icon-btn" id="optionBackBtn" type="button" aria-label="뒤로가기">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#7A5C29" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <h1 class="app-header__title">환경 설정</h1>
+        <span></span>
+      </header>
+
+      <!-- 프로필 요약 카드 -->
+      <div id="optionProfileCard" class="option-profile-card"></div>
+
+      <!-- 메뉴 섹션들 -->
+      <div id="optionSections"></div>
+
+      <!-- 앱 버전 -->
+      <p class="option-version">Moyora v2.4.0</p>
+
+    </div>
+
+    <!-- 하단 네비게이션 -->
+    <nav class="bottom-nav" id="bottomNav"></nav>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="common.js"></script>
+  <script src="option.js"></script>
+</body>
+
+</html>
