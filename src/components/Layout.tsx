@@ -9,6 +9,7 @@ import { SearchModal } from './Modal/SearchModal';
 import { CameraModal } from './Modal/CameraModal';
 import { MemoryModal } from './Modal/MemoryModal';
 import { CustomCursor } from './CustomCursor';
+import { VirtualKeyboard } from './VirtualKeyboard';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -66,6 +67,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {isSearchOpen && <SearchModal />}
       {isCameraOpen && <CameraModal />}
       {isMemoryOpen && <MemoryModal />}
+      
+      {/* 모바일 가상 키보드 글로벌 마운트 */}
+      <VirtualKeyboard />
     </AppShell>
   );
 };
