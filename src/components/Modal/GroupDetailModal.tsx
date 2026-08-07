@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import type { Group } from '../../types';
 import { useAppContext } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../Toast';
 import { GoogleMapView } from '../Map/GoogleMapView';
+import { LocationVoteModal } from './LocationVoteModal';
 
 import apeachAvatar from '../../assets/apeach_avatar.png';
 import choonsikAvatar from '../../assets/choonsik_avatar.png';
@@ -56,6 +57,7 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
   const { toggleFavoriteGroup } = useAppContext();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [isVoteOpen, setIsVoteOpen] = useState(false);
 
   if (!isOpen || !group) return null;
 
@@ -101,6 +103,24 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
             <MemberBadge>참여 멤버 {group.memberCount}명</MemberBadge>
           </HeroMeta>
         </HeroCard>
+
+        {/* 초대 링크 복사 영역 */}
+        <ShareLinkSection>
+          <ShareLinkBtn
+            type="button"
+            onClick={() => {
+              const inviteUrl = `${window.location.origin}/groups?join=${group.id}`;
+              navigator.clipboard.writeText(inviteUrl).then(() => {
+                showToast('초대 링크가 복사되었습니다! 🔗', 'success');
+              }).catch(() => {
+                showToast('초대 링크 복사에 실패했습니다.', 'error');
+              });
+            }}
+          >
+            <span>🔗 이 모임 초대 링크 복사하기</span>
+            <CopyBadge>복사</CopyBadge>
+          </ShareLinkBtn>
+        </ShareLinkSection>
 
         {/* 참여 멤버 아바타 리스트 */}
         <SectionBox>
@@ -149,7 +169,12 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
 
         {/* 모임 위치 & 구글 지도 */}
         <SectionBox>
-          <SectionLabel>📍 모임 만남 장소 (구글 지도)</SectionLabel>
+          <LocationHeaderRow>
+            <SectionLabel>📍 모임 만남 장소 (구글 지도)</SectionLabel>
+            <VoteTriggerBtn type="button" onClick={() => setIsVoteOpen(true)}>
+              장소 투표 🗳️
+            </VoteTriggerBtn>
+          </LocationHeaderRow>
           <GoogleMapView
             locationName={group.name}
             address="서울특별시 강남구 테헤란로 101"
@@ -168,6 +193,13 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
           </CalcBtn>
         </FooterSection>
       </ModalCard>
+
+      {/* 장소 투표 모달 */}
+      <LocationVoteModal
+        isOpen={isVoteOpen}
+        onClose={() => setIsVoteOpen(false)}
+        groupName={group.name}
+      />
     </Overlay>
   );
 };
@@ -435,3 +467,74 @@ const CalcBtn = styled.button`
     transform: translateY(-1px);
   }
 `;
+
+const ShareLinkSection = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ShareLinkBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  background: #FFFBF3;
+  border: 1.5px dashed #F3E4CE;
+  border-radius: 14px;
+  color: #7A5C29;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #FFF6E5;
+    border-color: #E6D2B5;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+const CopyBadge = styled.span`
+  background: #7A5C29;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2.5px 8px;
+  border-radius: 8px;
+`;
+
+const LocationHeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+`;
+
+const VoteTriggerBtn = styled.button`
+  font-size: 11px;
+  font-weight: 800;
+  color: #7A5C29;
+  background: #FFFBF3;
+  border: 1px solid #F3E4CE;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #FFF6E5;
+    border-color: #E6D2B5;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+

@@ -270,6 +270,7 @@ interface AppContextType {
   optionMenuSections: OptionMenuSection[];
   savedMoments: Moment[];
   addGroup: (name: string, purpose: string, icon?: string) => void;
+  joinGroupById: (groupId: string) => Group | null;
   updateProfile: (updated: Partial<Profile>) => void;
   updatePayoutAccount: (bankName: string, accountNumber: string, holderName: string) => void;
   toggleNotifications: () => void;
@@ -404,13 +405,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const addGroup = (name: string, purpose: string, icon?: string) => {
+    const groupId = `group-${Date.now()}`;
     const newGroup: Group = {
-      id: `group-${Date.now()}`,
+      id: groupId,
       name,
       memberCount: 1,
       thumbnailColor: ['pink', 'cream', 'yellow', 'blue', 'green'][Math.floor(Math.random() * 5)],
       icon: icon || '👥',
       isFavorite: false,
+      joinLink: `/join/${groupId}`,
       createdAt: new Date().toISOString(),
       recentActivities: [
         {
@@ -423,6 +426,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       members: [{ avatarUrl: 'avatar_me_circle.png' }]
     };
     setGroups((prev) => [newGroup, ...prev]);
+  };
+
+  const joinGroupById = (groupId: string): Group | null => {
+    let joinedGroup: Group | null = null;
+    setGroups((prev) => {
+      const exists = prev.some((g) => g.id === groupId);
+      if (exists) {
+        return prev.map((g) => {
+          if (g.id === groupId) {
+            joinedGroup = g;
+            const hasMe = g.members.some((m) => m.avatarUrl === 'avatar_me_circle.png');
+            return {
+              ...g,
+              memberCount: hasMe ? g.memberCount : g.memberCount + 1,
+              members: hasMe ? g.members : [...g.members, { avatarUrl: 'avatar_me_circle.png' }]
+            };
+          }
+          return g;
+        });
+      }
+      return prev;
+    });
+    return joinedGroup;
   };
 
   const updatePayoutAccount = (bankName: string, accountNumber: string, holderName: string) => {
@@ -514,6 +540,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         optionMenuSections,
         savedMoments,
         addGroup,
+        joinGroupById,
         updateProfile,
         updatePayoutAccount,
         toggleNotifications,

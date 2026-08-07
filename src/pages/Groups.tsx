@@ -5,6 +5,7 @@ import type { Group } from '../types';
 import { MyGroupsModal } from '../components/Modal/MyGroupsModal';
 import { GroupDetailModal } from '../components/Modal/GroupDetailModal';
 import { CreateGroupModal } from '../components/Modal/CreateGroupModal';
+import { ActivityDetailModal } from '../components/Modal/ActivityDetailModal';
 
 import avatarMe from '../assets/avatar_me_circle.png';
 import avatarF1 from '../assets/avatar_f1_circle.png';
@@ -56,6 +57,8 @@ export const Groups: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedActivityForModal, setSelectedActivityForModal] = useState<any | null>(null);
+  const [isActivityDetailModalOpen, setIsActivityDetailModalOpen] = useState(false);
 
   // '즐겨찾기'가 아닌 모임들만 리스트에 노출
   const regularGroups = groups.filter((g) => !g.isFavorite);
@@ -92,6 +95,11 @@ export const Groups: React.FC = () => {
   const handleGroupCardClick = (group: Group) => {
     setSelectedGroup(group);
     setIsDetailModalOpen(true);
+  };
+
+  const handleActivityClick = (act: any) => {
+    setSelectedActivityForModal(act);
+    setIsActivityDetailModalOpen(true);
   };
 
   return (
@@ -168,7 +176,7 @@ export const Groups: React.FC = () => {
             <EmptyState>아직 활동 내역이 없어요.</EmptyState>
           ) : (
             allActivities.slice(0, 5).map((act) => (
-              <ActivityItemCard key={act.id}>
+              <ActivityItemCard key={act.id} onClick={() => handleActivityClick(act)}>
                 <ActivityItemIcon className={act.type}>
                   {ACTIVITY_ICONS[act.type] || '🔔'}
                 </ActivityItemIcon>
@@ -207,7 +215,7 @@ export const Groups: React.FC = () => {
                 <EmptyState>활동 내역이 없습니다.</EmptyState>
               ) : (
                 allActivities.map((act) => (
-                  <ActivitySheetItem key={act.id}>
+                  <ActivitySheetItem key={act.id} onClick={() => handleActivityClick(act)}>
                     <ActivityItemIcon className={act.type}>
                       {ACTIVITY_ICONS[act.type] || '🔔'}
                     </ActivityItemIcon>
@@ -241,6 +249,13 @@ export const Groups: React.FC = () => {
       <CreateGroupModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      {/* 최근 활동 상세 모달 */}
+      <ActivityDetailModal
+        isOpen={isActivityDetailModalOpen}
+        activity={selectedActivityForModal}
+        onClose={() => setIsActivityDetailModalOpen(false)}
       />
     </>
   );
@@ -476,6 +491,14 @@ const ActivityItemCard = styled.div`
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(38, 38, 44, 0.08);
+  }
 `;
 
 const ActivityItemIcon = styled.div`
@@ -642,6 +665,7 @@ const ActivitySheetItem = styled.div`
   background: ${({ theme }) => theme.colors.bgCard};
   margin-bottom: 8px;
   box-shadow: 0 2px 8px rgba(38, 38, 44, 0.04);
+  cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
               box-shadow 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
   &:hover {

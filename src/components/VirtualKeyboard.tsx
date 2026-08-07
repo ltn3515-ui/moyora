@@ -22,7 +22,7 @@ export const VirtualKeyboard: React.FC = () => {
       }
     };
 
-    const handleBlur = (e: FocusEvent) => {
+    const handleBlur = () => {
       // 탭핑 버튼 클릭 시 즉각 닫히는 현상을 방지하기 위해 setTimeout 사용
       setTimeout(() => {
         const activeEl = document.activeElement;

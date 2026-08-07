@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { useAppContext } from '../context/AppContext';
+import { useToast } from './Toast';
 
 import { SearchModal } from './Modal/SearchModal';
 import { CameraModal } from './Modal/CameraModal';
@@ -17,7 +18,26 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { isSearchOpen, isCameraOpen, isMemoryOpen } = useAppContext();
+  const { isSearchOpen, isCameraOpen, isMemoryOpen, joinGroupById } = useAppContext();
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    // 쿼리 스트링 파싱
+    const params = new URLSearchParams(location.search);
+    const joinGroupId = params.get('join');
+    if (joinGroupId) {
+      const joined = joinGroupById(joinGroupId);
+      if (joined) {
+        showToast(`초대 링크를 통해 '${joined.name}' 모임에 참가 완료했습니다! 🎉`, 'success');
+      } else {
+        showToast('존재하지 않거나 만료된 모임 초대 링크입니다. ⚠️', 'error');
+      }
+      
+      // 주소창에서 join 쿼리 파라미터 정리 (히스토리 정리)
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, [location.search, joinGroupById, showToast]);
 
   const isHideHeaderFooter = location.pathname === '/' || location.pathname === '/login';
 

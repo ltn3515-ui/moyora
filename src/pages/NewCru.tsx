@@ -38,6 +38,7 @@ export const NewCru: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isCustomSelected, setIsCustomSelected] = useState(false);
   const [customInputValue, setCustomInputValue] = useState('');
+  const [createShareLink, setCreateShareLink] = useState(true);
 
   const selectPurpose = (id: string) => {
     setSelectedId(id);
@@ -69,11 +70,22 @@ export const NewCru: React.FC = () => {
       else if (selected?.icon === 'ball') icon = '⭐️';
     }
 
-    // React 앱 편의 상 모임 목적 이름으로 실제 새 그룹을 Context에 추가하고 이전 화면으로 보냄!
-    // 기획상 경고 후 추가 동작
+    const generatedGroupId = `group-${Date.now()}`;
     addGroup(purposeName, purposeName, icon);
-    alert(`"${purposeName}" 모임이 성공적으로 생성되었습니다!`);
-    navigate('/groups');
+
+    if (createShareLink) {
+      const inviteUrl = `${window.location.origin}/groups?join=${generatedGroupId}`;
+      navigator.clipboard.writeText(inviteUrl).then(() => {
+        alert(`"${purposeName}" 모임이 성공적으로 생성되었습니다!\n\n🔗 복사된 모임 초대 링크:\n${inviteUrl}\n\n링크가 클립보드에 자동 복사되었습니다. 링크를 친구에게 공유해보세요!`);
+        navigate('/groups');
+      }).catch(() => {
+        alert(`"${purposeName}" 모임이 성공적으로 생성되었습니다!\n\n🔗 모임 초대 링크:\n${inviteUrl}`);
+        navigate('/groups');
+      });
+    } else {
+      alert(`"${purposeName}" 모임이 성공적으로 생성되었습니다!`);
+      navigate('/groups');
+    }
   };
 
   return (
@@ -135,6 +147,20 @@ export const NewCru: React.FC = () => {
           onClick={(e) => e.stopPropagation()}
         />
       </PurposeCustom>
+
+      {/* 초대 링크 활성화 체크박스 */}
+      <LinkCreationOptionCard onClick={() => setCreateShareLink(!createShareLink)}>
+        <CheckboxInput 
+          type="checkbox" 
+          checked={createShareLink} 
+          onChange={() => {}}
+          aria-label="초대 링크 생성 동의"
+        />
+        <LinkOptionTextWrap>
+          <LinkOptionTitle>🔗 모임 초대 링크 만들기 (추천)</LinkOptionTitle>
+          <LinkOptionDesc>앱이 설치되지 않은 사람이나 비회원도 링크 하나로 즉시 이 모임에 참여할 수 있습니다.</LinkOptionDesc>
+        </LinkOptionTextWrap>
+      </LinkCreationOptionCard>
 
       {/* 다음 단계 푸터 */}
       <WizardFooter>
@@ -361,3 +387,51 @@ const NextStepBtn = styled.button`
     }
   }
 `;
+
+const LinkCreationOptionCard = styled.div`
+  margin: 18px 20px 0;
+  padding: 16px;
+  background: #FFFBF3;
+  border: 1.5px solid #F3E4CE;
+  border-radius: ${({ theme }) => theme.radius.md};
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(38, 38, 44, 0.02);
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const CheckboxInput = styled.input`
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  accent-color: ${({ theme }) => theme.colors.yellow};
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+`;
+
+const LinkOptionTextWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const LinkOptionTitle = styled.span`
+  font-size: 14px;
+  font-weight: 850;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+const LinkOptionDesc = styled.span`
+  font-size: 11.5px;
+  color: ${({ theme }) => theme.colors.textSub};
+  line-height: 1.45;
+  font-weight: 600;
+`;
+

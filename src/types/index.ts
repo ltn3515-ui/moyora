@@ -42,6 +42,7 @@ export interface Group {
   members: Member[];
   createdAt: string;
   recentActivities: GroupActivity[];
+  joinLink?: string;
 }
 
 export interface Friend {
