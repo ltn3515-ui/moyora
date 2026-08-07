@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import type { Settlement } from '../../types';
 import { useAppContext } from '../../context/AppContext';
@@ -28,6 +28,9 @@ export const SettlementDetailModal: React.FC<SettlementDetailModalProps> = ({
   const { payoutAccount } = useAppContext();
   const { showToast } = useToast();
 
+  const [remindTarget, setRemindTarget] = useState<{ name: string; amount: number } | null>(null);
+  const [remindMsg, setRemindMsg] = useState('');
+
   if (!isOpen || !settlement) return null;
 
   const isDone = settlement.status === 'done';
@@ -55,7 +58,10 @@ export const SettlementDetailModal: React.FC<SettlementDetailModalProps> = ({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalCard onClick={(e) => e.stopPropagation()}>
+      <ModalCard 
+        style={remindTarget ? { overflow: 'hidden' } : {}} 
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* 모달 헤더 */}
         <ModalHeader>
           <HeaderTitle>정산 내역 상세</HeaderTitle>
@@ -92,20 +98,34 @@ export const SettlementDetailModal: React.FC<SettlementDetailModalProps> = ({
         <DetailSection>
           <SectionTitle>정산 참여 멤버 (1/N)</SectionTitle>
           <MemberList>
-            {memberList.map((m, idx) => (
-              <MemberRow key={idx}>
-                <MemberInfo>
-                  <MemberAvatar>{m.name.charAt(0)}</MemberAvatar>
-                  <MemberName>{m.name}</MemberName>
-                </MemberInfo>
-                <MemberSide>
-                  <MemberAmount>₩{m.amount.toLocaleString()}</MemberAmount>
-                  <PaidBadge className={m.paid ? 'paid' : 'pending'}>
-                    {m.paid ? '입금완료' : '미입금'}
-                  </PaidBadge>
-                </MemberSide>
-              </MemberRow>
-            ))}
+            {memberList.map((m, idx) => {
+              const isMe = m.name.includes('나');
+              return (
+                <MemberRow key={idx}>
+                  <MemberInfo>
+                    <MemberAvatar>{m.name.charAt(0)}</MemberAvatar>
+                    <MemberName>{m.name}</MemberName>
+                  </MemberInfo>
+                  <MemberSide>
+                    <MemberAmount>₩{m.amount.toLocaleString()}</MemberAmount>
+                    <PaidBadge className={m.paid ? 'paid' : 'pending'}>
+                      {m.paid ? '입금완료' : '미입금'}
+                    </PaidBadge>
+                    {!m.paid && !isMe && (
+                      <RemindBtn 
+                        onClick={() => {
+                          setRemindTarget(m);
+                          setRemindMsg(`${m.name}님, '${settlement.title}' 정산금 ₩${m.amount.toLocaleString()} 입금 부탁드려요! 💸`);
+                        }}
+                        aria-label="콕 찌르기"
+                      >
+                        💬 찌르기
+                      </RemindBtn>
+                    )}
+                  </MemberSide>
+                </MemberRow>
+              );
+            })}
           </MemberList>
         </DetailSection>
 
@@ -128,6 +148,48 @@ export const SettlementDetailModal: React.FC<SettlementDetailModalProps> = ({
             {isDone ? '대기중으로 변경' : '정산 완료 처리 ✅'}
           </ToggleStatusBtn>
         </FooterSection>
+
+        {/* 미입금 콕 찌르기 패널 */}
+        {remindTarget && (
+          <RemindPanel>
+            <PanelHeader>
+              <PanelTitle>💬 {remindTarget.name}님 콕 찌르기</PanelTitle>
+              <PanelCloseBtn onClick={() => setRemindTarget(null)}>✕</PanelCloseBtn>
+            </PanelHeader>
+            
+            <TemplateRow>
+              <SectionTitle style={{ fontSize: '11px', color: '#64748b' }}>알림 템플릿 선택</SectionTitle>
+              {[
+                `${remindTarget.name}님, '${settlement.title}' 정산금 ₩${remindTarget.amount.toLocaleString()} 입금 부탁드려요! 💸`,
+                `${remindTarget.name}님, 바쁘시겠지만 정산 수령 계좌로 송금 부탁드립니다! 🙏`,
+                `${remindTarget.name}님, 정산 수령 계좌: ${payoutAccount.bankName} ${payoutAccount.accountNumberMasked} (${payoutAccount.holderName}) 입니다. 😊`
+              ].map((tpl, i) => (
+                <TemplateChip key={i} type="button" onClick={() => setRemindMsg(tpl)}>
+                  {i === 0 && '💸 '}
+                  {i === 1 && '🙏 '}
+                  {i === 2 && '🏦 '}
+                  {tpl.length > 38 ? tpl.slice(0, 38) + '...' : tpl}
+                </TemplateChip>
+              ))}
+            </TemplateRow>
+
+            <MsgTextArea
+              value={remindMsg}
+              onChange={(e) => setRemindMsg(e.target.value)}
+              placeholder="전송할 재촉 메시지를 입력해주세요..."
+            />
+
+            <SendBtn
+              type="button"
+              onClick={() => {
+                showToast(`${remindTarget.name}님에게 알림 메시지를 전송했습니다! 📲`, 'success', '✉️');
+                setRemindTarget(null);
+              }}
+            >
+              알림 메시지 전송하기
+            </SendBtn>
+          </RemindPanel>
+        )}
       </ModalCard>
     </Overlay>
   );
@@ -172,6 +234,7 @@ const ModalCard = styled.div`
   overflow-y: auto;
   animation: ${slideUp} 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   box-sizing: border-box;
+  position: relative;
 
   &::-webkit-scrollbar {
     display: none;
@@ -484,5 +547,135 @@ const ToggleStatusBtn = styled.button`
     &:hover {
       background: #e5e7eb;
     }
+  }
+`;
+
+const RemindBtn = styled.button`
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+  }
+`;
+
+const RemindPanel = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1.5px solid #f1f5f9;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 100;
+  animation: slideUpPanel 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+
+  @keyframes slideUpPanel {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+`;
+
+const PanelHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+`;
+
+const PanelTitle = styled.span`
+  font-size: 14px;
+  font-weight: 800;
+  color: #1f2937;
+`;
+
+const PanelCloseBtn = styled.button`
+  background: #f3f4f6;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  color: #4b5563;
+  cursor: pointer;
+`;
+
+const TemplateRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const TemplateChip = styled.button`
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.4;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
+`;
+
+const MsgTextArea = styled.textarea`
+  width: 100%;
+  height: 64px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1.5px solid #d1d5db;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #fedd13;
+  }
+`;
+
+const SendBtn = styled.button`
+  width: 100%;
+  padding: 12px;
+  background: #fedd13;
+  color: #111827;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #fada0a;
   }
 `;
