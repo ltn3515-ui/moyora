@@ -66,7 +66,7 @@ const OPTION_ICONS = {
 };
 
 export const Option: React.FC = () => {
-  const { profile, appSettings, payoutAccount, optionMenuSections, toggleNotifications, changeLanguage } = useAppContext();
+  const { profile, appSettings, payoutAccount, optionMenuSections, toggleNotifications, changeLanguage, toggleBlueBackground } = useAppContext();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -147,10 +147,18 @@ export const Option: React.FC = () => {
                   {/* 값 유형별 렌더링 */}
                   {item.type === 'toggle' && (
                     <ToggleSwitch 
-                      className={appSettings.notificationsEnabled ? 'is-on' : ''} 
-                      onClick={toggleNotifications}
+                      className={
+                        item.key === 'notifications' 
+                          ? (appSettings.notificationsEnabled ? 'is-on' : '')
+                          : (appSettings.blueBackgroundEnabled ? 'is-on' : '')
+                      } 
+                      onClick={item.key === 'notifications' ? toggleNotifications : toggleBlueBackground}
                       role="switch"
-                      aria-checked={appSettings.notificationsEnabled}
+                      aria-checked={
+                        item.key === 'notifications' 
+                          ? appSettings.notificationsEnabled 
+                          : !!appSettings.blueBackgroundEnabled
+                      }
                     />
                   )}
 

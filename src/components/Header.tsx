@@ -21,10 +21,11 @@ export const Header: React.FC<HeaderProps> = ({
   onBellClick
 }) => {
   const navigate = useNavigate();
-  const { unreadNotifCount } = useAppContext();
+  const { unreadNotifCount, appSettings } = useAppContext();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const hasUnread = unreadNotifCount > 0;
+  const isBlueBg = appSettings.blueBackgroundEnabled;
 
   const handleBack = () => {
     if (onBackClick) {
@@ -46,12 +47,12 @@ export const Header: React.FC<HeaderProps> = ({
   if (!title) {
     return (
       <>
-        <LogoHeaderContainer>
+        <LogoHeaderContainer $blueBg={isBlueBg}>
           <LogoLink onClick={() => navigate('/home')}>
             <LogoImage src={imgLogoFull} alt="모여라" />
           </LogoLink>
           {showBell && (
-            <BellButton aria-label="알림" onClick={handleBell}>
+            <BellButton aria-label="알림" onClick={handleBell} style={isBlueBg ? { color: '#ffffff' } : {}}>
               🔔{hasUnread && <BellBadge />}
             </BellButton>
           )}
@@ -68,17 +69,17 @@ export const Header: React.FC<HeaderProps> = ({
   // 타이틀이 있는 경우 타이틀 헤더로 렌더링
   return (
     <>
-      <AppHeaderContainer>
+      <AppHeaderContainer $blueBg={isBlueBg}>
         {showBackButton ? (
-          <HeaderIconButton onClick={handleBack} aria-label="뒤로가기">
+          <HeaderIconButton onClick={handleBack} aria-label="뒤로가기" $blueBg={isBlueBg}>
             <i className="fa-solid fa-chevron-left"></i>
           </HeaderIconButton>
         ) : (
           <div />
         )}
-        <HeaderTitle>{title}</HeaderTitle>
+        <HeaderTitle $blueBg={isBlueBg}>{title}</HeaderTitle>
         {showBell ? (
-          <HeaderIconButton className="right" aria-label="알림" onClick={handleBell}>
+          <HeaderIconButton className="right" aria-label="알림" onClick={handleBell} $blueBg={isBlueBg}>
             🔔{hasUnread && <BellBadgeDot />}
           </HeaderIconButton>
         ) : (
@@ -95,15 +96,16 @@ export const Header: React.FC<HeaderProps> = ({
 };
 
 // Styled Components
-const LogoHeaderContainer = styled.header`
+const LogoHeaderContainer = styled.header<{ $blueBg?: boolean }>`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px 20px;
   height: 68px;
-  background: ${({ theme }) => theme.colors.bg};
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  background: ${({ theme, $blueBg }) => $blueBg ? '#1C5EE6' : theme.colors.bg};
+  border-bottom: 1px solid ${({ $blueBg }) => $blueBg ? 'rgba(255, 255, 255, 0.15)' : 'rgba(226, 232, 240, 0.6)'};
+  transition: all 0.3s ease;
 `;
 
 const LogoLink = styled.button`
@@ -138,6 +140,7 @@ const BellButton = styled.button`
   width: 40px;
   height: 40px;
   border-radius: ${({ theme }) => theme.radius.round};
+  background: transparent;
 `;
 
 const BellBadge = styled.span`
@@ -151,7 +154,7 @@ const BellBadge = styled.span`
   border: 1.5px solid ${({ theme }) => theme.colors.bg};
 `;
 
-const AppHeaderContainer = styled.header`
+const AppHeaderContainer = styled.header<{ $blueBg?: boolean }>`
   position: sticky;
   top: 0;
   z-index: 20;
@@ -160,31 +163,34 @@ const AppHeaderContainer = styled.header`
   align-items: center;
   height: ${({ theme }) => theme.layout.headerHeight};
   padding: 0 ${({ theme }) => theme.spacing.space4};
-  background: ${({ theme }) => theme.colors.bg};
+  background: ${({ theme, $blueBg }) => $blueBg ? '#1C5EE6' : theme.colors.bg};
+  transition: background 0.3s ease;
 `;
 
-const HeaderIconButton = styled.button`
+const HeaderIconButton = styled.button<{ $blueBg?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
   border-radius: ${({ theme }) => theme.radius.round};
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme, $blueBg }) => $blueBg ? '#ffffff' : theme.colors.text};
   font-size: 16px;
   position: relative;
+  background: transparent;
 
   &.right {
     justify-self: end;
   }
 `;
 
-const HeaderTitle = styled.h1`
+const HeaderTitle = styled.h1<{ $blueBg?: boolean }>`
   text-align: center;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.2px;
   margin: 0;
+  color: ${({ theme, $blueBg }) => $blueBg ? '#ffffff' : theme.colors.text};
 `;
 
 const BellBadgeDot = styled.span`

@@ -237,6 +237,7 @@ const optionMenuSections: OptionMenuSection[] = [
     label: '환경 및 앱 설정',
     items: [
       { key: 'notifications', label: '알림 설정', icon: 'bell', color: 'yellow', type: 'toggle' },
+      { key: 'blueBackground', label: '블루 배경 모드', icon: 'globe', color: 'blue', type: 'toggle' },
       { key: 'language', label: '다국어 설정', icon: 'globe', color: 'pink', type: 'select' },
       { key: 'account', label: '대표 계좌 관리', sublabel: '정산 수급 계좌 설정', icon: 'bank', color: 'blue', type: 'link' }
     ]
@@ -274,6 +275,7 @@ interface AppContextType {
   updateProfile: (updated: Partial<Profile>) => void;
   updatePayoutAccount: (bankName: string, accountNumber: string, holderName: string) => void;
   toggleNotifications: () => void;
+  toggleBlueBackground: () => void;
   changeLanguage: (lang: string) => void;
   toggleFavoriteGroup: (id: string) => void;
   toggleFavoriteMoment: (id: string) => void;
@@ -343,7 +345,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [appSettings, setAppSettings] = useState<AppSettings>({
     notificationsEnabled: true,
     language: '한국어',
-    appVersion: 'v2.4.0'
+    appVersion: 'v2.4.0',
+    blueBackgroundEnabled: false
   });
   const [payoutAccount, setPayoutAccount] = useState<PayoutAccount>({
     bankName: '국민은행',
@@ -469,6 +472,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const toggleBlueBackground = () => {
+    setAppSettings((prev) => ({
+      ...prev,
+      blueBackgroundEnabled: !prev.blueBackgroundEnabled
+    }));
+  };
+
   const changeLanguage = (lang: string) => {
     setAppSettings((prev) => ({
       ...prev,
@@ -544,6 +554,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateProfile,
         updatePayoutAccount,
         toggleNotifications,
+        toggleBlueBackground,
         changeLanguage,
         toggleFavoriteGroup,
         toggleFavoriteMoment,

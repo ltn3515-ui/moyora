@@ -100,6 +100,7 @@ export interface AppSettings {
   notificationsEnabled: boolean;
   language: string;
   appVersion: string;
+  blueBackgroundEnabled?: boolean;
 }
 
 export interface PayoutAccount {

@@ -18,7 +18,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { isSearchOpen, isCameraOpen, isMemoryOpen, joinGroupById } = useAppContext();
+  const { isSearchOpen, isCameraOpen, isMemoryOpen, joinGroupById, appSettings } = useAppContext();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const headerProps = getHeaderProps();
 
   return (
-    <AppShell>
+    <AppShell $blueBg={appSettings.blueBackgroundEnabled}>
       <CustomCursor />
       {!isHideHeaderFooter && headerProps && (
         <Header 
@@ -95,18 +95,19 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 // Styled Components
-const AppShell = styled.div`
+const AppShell = styled.div<{ $blueBg?: boolean }>`
   position: relative;
   max-width: ${({ theme }) => theme.layout.maxWidth};
   min-height: 100vh;
   margin: 0 auto;
-  background: ${({ theme }) => theme.colors.bg};
+  background: ${({ theme, $blueBg }) => $blueBg ? '#1C5EE6' : theme.colors.bg};
   overflow-x: hidden;
   box-shadow: 0 0 32px rgba(38, 38, 44, 0.15);
   border-left: 1px solid rgba(38, 38, 44, 0.1);
   border-right: 1px solid rgba(38, 38, 44, 0.1);
   display: flex;
   flex-direction: column;
+  transition: background 0.3s ease;
 `;
 
 const MainContent = styled.main`
