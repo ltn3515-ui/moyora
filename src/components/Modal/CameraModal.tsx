@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { useAppContext } from '../../context/AppContext';
 import { useToast } from '../Toast';
 import receiptScanPreview from '../../assets/receipt_scan_preview.png';
+import { SplitCalculatorModal } from './SplitCalculatorModal';
 
 type ScanMode = 'qr' | 'ocr' | 'gallery';
 
@@ -35,6 +36,11 @@ export const CameraModal: React.FC = () => {
   const [manualTitle, setManualTitle] = useState('');
   const [manualAmount, setManualAmount] = useState('');
   const [manualCategory, setManualCategory] = useState('식비/모임');
+  const [isSplitCalcOpen, setIsSplitCalcOpen] = useState(false);
+
+  const handleFillAmountFromCalc = (amount: number) => {
+    setManualAmount(amount.toString());
+  };
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -405,7 +411,12 @@ export const CameraModal: React.FC = () => {
                 </FormGroup>
 
                 <FormGroup>
-                  <FormLabel>정산 총 금액 (원)</FormLabel>
+                  <FormLabelRow>
+                    <FormLabel style={{ margin: 0 }}>정산 총 금액 (원)</FormLabel>
+                    <CalcLinkBtn type="button" onClick={() => setIsSplitCalcOpen(true)}>
+                      🧮 N분의 1 계산기
+                    </CalcLinkBtn>
+                  </FormLabelRow>
                   <FormInput 
                     type="text"
                     placeholder="0"
@@ -442,6 +453,14 @@ export const CameraModal: React.FC = () => {
               </FormContainer>
             </InputSheetCard>
           </SheetOverlay>
+        )}
+
+        {isSplitCalcOpen && (
+          <SplitCalculatorModal
+            isOpen={isSplitCalcOpen}
+            onClose={() => setIsSplitCalcOpen(false)}
+            onFillAmount={handleFillAmountFromCalc}
+          />
         )}
 
         {/* 3. 도움말 가이드 시트 */}
@@ -1054,6 +1073,29 @@ const FormLabel = styled.label`
   font-size: 12.5px;
   font-weight: 700;
   color: #52525B;
+`;
+
+const FormLabelRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CalcLinkBtn = styled.button`
+  font-size: 11px;
+  font-weight: 850;
+  color: #2563eb;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const FormInput = styled.input`

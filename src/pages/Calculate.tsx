@@ -6,6 +6,7 @@ import { GameRoomModal } from '../components/Modal/GameRoomModal';
 import { SettlementDetailModal } from '../components/Modal/SettlementDetailModal';
 import { PaySettlementModal } from '../components/Modal/PaySettlementModal';
 import { ShareImageModal } from '../components/Modal/ShareImageModal';
+import { SplitCalculatorModal } from '../components/Modal/SplitCalculatorModal';
 
 import galleryThumb from '../assets/gallery_thumb.png';
 import workshopThumb from '../assets/workshop_thumb.png';
@@ -80,6 +81,7 @@ export const Calculate: React.FC = () => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [isShareImageModalOpen, setIsShareImageModalOpen] = useState(false);
+  const [isSplitCalcOpen, setIsSplitCalcOpen] = useState(false);
 
   const handleOpenDetail = (item?: Settlement) => {
     const target = item || (settlements && settlements.length > 0 ? settlements[0] : null);
@@ -173,7 +175,7 @@ export const Calculate: React.FC = () => {
         </ParticipationCard>
       </Section>
 
-      {/* QR카메라 / 게임룸 / 정산하기 */}
+      {/* QR카메라 / 계산기 / 게임룸 / 정산하기 */}
       <Section className="margin3">
         <ActionGrid>
           <ActionCardQr onClick={() => setCameraOpen(true)}>
@@ -181,6 +183,11 @@ export const Calculate: React.FC = () => {
             <ActionCardTitle>QR 카메라</ActionCardTitle>
             <ActionCardDesc>현장 정산 스캔</ActionCardDesc>
           </ActionCardQr>
+          <ActionCardCalc onClick={() => setIsSplitCalcOpen(true)}>
+            <ActionIcon className="calc">🧮</ActionIcon>
+            <ActionCardTitle>N분의 1 계산기</ActionCardTitle>
+            <ActionCardDesc>간편 금액 분할</ActionCardDesc>
+          </ActionCardCalc>
           <ActionCardGame onClick={() => setIsGameRoomOpen(true)}>
             <ActionIcon className="game">{ICON_GAME}</ActionIcon>
             <ActionCardTitle>게임 룸</ActionCardTitle>
@@ -343,6 +350,12 @@ export const Calculate: React.FC = () => {
         isOpen={isShareImageModalOpen}
         onClose={() => setIsShareImageModalOpen(false)}
       />
+
+      {/* N분의 1 정산 계산기 모달 */}
+      <SplitCalculatorModal
+        isOpen={isSplitCalcOpen}
+        onClose={() => setIsSplitCalcOpen(false)}
+      />
     </>
   );
 };
@@ -481,8 +494,8 @@ const ChartAxis = styled.div`
 
 const ActionGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 `;
 
 const BaseActionCard = styled.button`
@@ -508,6 +521,10 @@ const ActionCardQr = styled(BaseActionCard)`
 
 const ActionCardGame = styled(BaseActionCard)`
   background: #C4DCF2;
+`;
+
+const ActionCardCalc = styled(BaseActionCard)`
+  background: #FFE4E4;
 `;
 
 const ActionCardPay = styled(BaseActionCard)`
