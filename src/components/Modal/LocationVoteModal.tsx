@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useToast } from '../Toast';
 import { GoogleMapView } from '../Map/GoogleMapView';
+import { AiLocationRecommendModal } from './AiLocationRecommendModal';
 
 interface VoteOption {
   id: string;
@@ -53,6 +54,18 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
   const [newPlaceName, setNewPlaceName] = useState('');
   const [newPlaceAddress, setNewPlaceAddress] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+
+  const handleAddOptionFromRecommend = (name: string, address: string) => {
+    const newOpt: VoteOption = {
+      id: `opt-${Date.now()}`,
+      name,
+      address,
+      votes: 0,
+      votedUsers: [],
+    };
+    setOptions((prev) => [...prev, newOpt]);
+  };
 
   if (!isOpen) return null;
 
@@ -227,9 +240,14 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
             </FormBtnRow>
           </AddForm>
         ) : (
-          <AddSuggestBtn type="button" onClick={() => setIsAdding(true)}>
-            ➕ 다른 장소 직접 추천하기
-          </AddSuggestBtn>
+          <ActionButtonsRow>
+            <AddSuggestBtn type="button" onClick={() => setIsAdding(true)}>
+              ➕ 다른 장소 추천
+            </AddSuggestBtn>
+            <AiSuggestBtn type="button" onClick={() => setIsAiModalOpen(true)}>
+              🤖 AI 중간지점 추천
+            </AiSuggestBtn>
+          </ActionButtonsRow>
         )}
 
         <FooterSection>
@@ -238,6 +256,14 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
           </CloseMainBtn>
         </FooterSection>
       </ModalCard>
+
+      {isAiModalOpen && (
+        <AiLocationRecommendModal
+          isOpen={isAiModalOpen}
+          onClose={() => setIsAiModalOpen(false)}
+          onAddOption={handleAddOptionFromRecommend}
+        />
+      )}
     </Overlay>
   );
 };
@@ -483,14 +509,20 @@ const MapContainer = styled.div`
   margin-top: 4px;
 `;
 
-const AddSuggestBtn = styled.button`
+const ActionButtonsRow = styled.div`
+  display: flex;
+  gap: 10px;
   width: 100%;
+`;
+
+const AddSuggestBtn = styled.button`
+  flex: 1;
   padding: 12px;
   background: transparent;
   border: 1.8px dashed #cbd5e1;
   border-radius: 14px;
   color: #64748b;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -499,6 +531,30 @@ const AddSuggestBtn = styled.button`
     background: #f8fafc;
     border-color: #94a3b8;
     color: #1e293b;
+  }
+`;
+
+const AiSuggestBtn = styled.button`
+  flex: 1.2;
+  padding: 12px;
+  background: #26262C;
+  border: 1.8px solid #26262C;
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  &:hover {
+    background: #111115;
+    border-color: #111115;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(38, 38, 44, 0.12);
   }
 `;
 
