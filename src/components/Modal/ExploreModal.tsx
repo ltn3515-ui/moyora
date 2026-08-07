@@ -91,20 +91,162 @@ const EXPLORE_FRIENDS_LIST: ExploreFriendItem[] = [
   { id: 'exp-f-05', name: '네오', statusMessage: '패션과 예술 전시회 같이 가요 👗', avatar: neoAvatar, mutualFriends: 6 },
 ];
 
+export interface PartnerPlaceItem {
+  id: string;
+  name: string;
+  location: string;
+  minCount: number;
+  maxCount: number;
+  ageGroups: string[];
+  benefit: string;
+  reason: string;
+  emoji: string;
+  tag: '맛집' | '핫플레이스' | '와인바' | '카페' | '루프탑' | '파인다이닝';
+}
+
+const PARTNER_PLACES_LIST: PartnerPlaceItem[] = [
+  {
+    id: 'place-01',
+    name: '성수 피치스 도원 (복합문화공간)',
+    location: '성수동',
+    minCount: 2,
+    maxCount: 20,
+    ageGroups: ['20대 초반', '20대 후반'],
+    benefit: '모여라 회원 전원 무료 음료 쿠폰 🥤 (에너지 드링크 or 아메리카노)',
+    reason: '🚗 주차 지원 및 트렌디한 스트릿카 전시 & 20대 감성에 맞춘 힙한 인테리어 구성',
+    emoji: '🏎️',
+    tag: '핫플레이스'
+  },
+  {
+    id: 'place-02',
+    name: '성수 온량 (이탈리안 레스토랑)',
+    location: '성수동',
+    minCount: 2,
+    maxCount: 6,
+    ageGroups: ['20대 후반', '30대 초반'],
+    benefit: '4인 이상 방문 예약 시 하우스 와인 1병 & 생바질 샐러드 무료 제공 🍷',
+    reason: '🍽️ 차분하고 앤티크한 분위기로 20-30대 소규모 프라이빗 친목 및 커플 모임 최적화',
+    emoji: '🍝',
+    tag: '맛집'
+  },
+  {
+    id: 'place-03',
+    name: '홍대 스티키파티 (캐주얼 와인바)',
+    location: '홍대/합정',
+    minCount: 4,
+    maxCount: 12,
+    ageGroups: ['20대 초반', '20대 후반'],
+    benefit: '6인 단체룸 예약 시 제휴 안주 플레이트(치즈 & 과일) 무료 제공 🧀',
+    reason: '🍷 가성비 좋은 하우스 와인 리스트와 인스타 감성 조명, 20대 사교 모임에 최적',
+    emoji: '🥂',
+    tag: '와인바'
+  },
+  {
+    id: 'place-04',
+    name: '여의도 고메블루 (스테이크 다이닝)',
+    location: '여의도',
+    minCount: 2,
+    maxCount: 8,
+    ageGroups: ['30대 초반', '40대 이상'],
+    benefit: '모여라 회원 단체 결제 시 총 결제 금액 10% 캐시백 & 디저트 제공 🍰',
+    reason: '👔 고급 프라이빗 룸 완비 및 비즈니스 미팅, 30대 이상 직장인 친목 회식 특화',
+    emoji: '🥩',
+    tag: '파인다이닝'
+  },
+  {
+    id: 'place-05',
+    name: '강남역 땀땀 (퓨전 베트남 음식)',
+    location: '강남역',
+    minCount: 2,
+    maxCount: 10,
+    ageGroups: ['20대 초반', '20대 후반', '30대 초반'],
+    benefit: '메인 디시 3개 이상 주문 시 수제 짜조 1접시 서비스 🥟',
+    reason: '🍜 줄 서서 먹는 매운 소곱창 쌀국수로 유명하며 대규모 캐주얼 모임에 적합한 접근성',
+    emoji: '🍲',
+    tag: '맛집'
+  },
+  {
+    id: 'place-06',
+    name: '성수 어반루프 (루프탑 비어 가든)',
+    location: '성수동',
+    minCount: 6,
+    maxCount: 30,
+    ageGroups: ['20대 후반', '30대 초반', '40대 이상'],
+    benefit: '10인 이상 대관/예약 시 수제 맥주 피처 2개 무료 서비스 🍺',
+    reason: '🌃 탁 트인 성수동 야경을 즐길 수 있는 루프탑 테이블, 넓은 대규모 단체 친목 추천',
+    emoji: '🌃',
+    tag: '루프탑'
+  },
+  {
+    id: 'place-07',
+    name: '합정 멜로우베이커리 (감성 디저트 카페)',
+    location: '홍대/합정',
+    minCount: 2,
+    maxCount: 5,
+    ageGroups: ['20대 초반', '20대 후반'],
+    benefit: '모든 음료 주문 시 수제 마카롱 1개씩 추가 증정 🍰',
+    reason: '🧁 20대 인스타 감성의 아기자기한 파스텔톤 포토존 및 수제 타르트 전문 맛집',
+    emoji: '🧁',
+    tag: '카페'
+  }
+];
+
 interface ExploreModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const ExploreModal: React.FC<ExploreModalProps> = ({ isOpen, onClose }) => {
-  const { addGroup } = useAppContext();
+  const { addGroup, groups } = useAppContext();
   const { showToast } = useToast();
 
-  const [activeTab, setActiveTab] = useState<'groups' | 'friends'>('groups');
+  const [activeTab, setActiveTab] = useState<'groups' | 'friends' | 'places'>('groups');
   const [friendQuery, setFriendQuery] = useState('');
   const [joinedGroupIds, setJoinedGroupIds] = useState<Record<string, boolean>>({});
   const [invitedFriendIds, setInvitedFriendIds] = useState<Record<string, boolean>>({});
   const [detailGroup, setDetailGroup] = useState<NewGroupExploreItem | null>(null);
+
+  // 맛집/핫플 제휴 필터 상태
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [headcount, setHeadcount] = useState<number>(4);
+  const [ageGroup, setAgeGroup] = useState<string>('20대 후반');
+  const [locationFilter, setLocationFilter] = useState<string>('성수동');
+  const [downloadedCoupons, setDownloadedCoupons] = useState<Record<string, boolean>>({});
+  const [sharedPlaces, setSharedPlaces] = useState<Record<string, boolean>>({});
+
+  const handleGroupSelect = (groupId: string) => {
+    setSelectedGroupId(groupId);
+    const g = groups.find((group) => group.id === groupId);
+    if (g) {
+      setHeadcount(g.memberCount);
+      // 모임 명을 통한 자동 위치 연계
+      if (g.name.includes('성수') || g.name.includes('드로잉')) {
+        setLocationFilter('성수동');
+      } else if (g.name.includes('홍대') || g.name.includes('합정') || g.name.includes('소셜')) {
+        setLocationFilter('홍대/합정');
+      } else if (g.name.includes('여의도') || g.name.includes('러닝') || g.name.includes('한강')) {
+        setLocationFilter('여의도');
+      } else if (g.name.includes('강남')) {
+        setLocationFilter('강남역');
+      }
+    }
+  };
+
+  // 제휴 맛집/핫플 필터링
+  const filteredPlaces = PARTNER_PLACES_LIST.filter((place) => {
+    // 1. 위치
+    if (place.location !== locationFilter) return false;
+    // 2. 인원
+    if (headcount < place.minCount || headcount > place.maxCount) return false;
+    // 3. 연령대
+    if (!place.ageGroups.includes(ageGroup)) return false;
+    return true;
+  });
+
+  // 폴백 장소 (매칭 장소가 전혀 없는 경우)
+  const displayPlaces = filteredPlaces.length > 0 
+    ? filteredPlaces 
+    : PARTNER_PLACES_LIST.filter(place => place.location === locationFilter);
 
   if (!isOpen) return null;
 
@@ -234,7 +376,7 @@ export const ExploreModal: React.FC<ExploreModalProps> = ({ isOpen, onClose }) =
                 className={activeTab === 'groups' ? 'active' : ''}
                 onClick={() => setActiveTab('groups')}
               >
-                새로운 모임 탐색 🧭
+                모임 탐색 🧭
               </TabBtn>
               <TabBtn
                 type="button"
@@ -242,6 +384,18 @@ export const ExploreModal: React.FC<ExploreModalProps> = ({ isOpen, onClose }) =
                 onClick={() => setActiveTab('friends')}
               >
                 친구 탐색 🔍
+              </TabBtn>
+              <TabBtn
+                type="button"
+                className={activeTab === 'places' ? 'active' : ''}
+                onClick={() => {
+                  setActiveTab('places');
+                  if (groups && groups.length > 0 && !selectedGroupId) {
+                    handleGroupSelect(groups[0].id);
+                  }
+                }}
+              >
+                제휴 맛집/핫플 🎁
               </TabBtn>
             </TabRow>
 
@@ -352,6 +506,155 @@ export const ExploreModal: React.FC<ExploreModalProps> = ({ isOpen, onClose }) =
                     })
                   )}
                 </FriendExploreList>
+              </ContentContainer>
+            )}
+
+            {/* ══════════════════════
+                탭 3: 제휴 맛집/핫플
+            ══════════════════════ */}
+            {activeTab === 'places' && (
+              <ContentContainer>
+                {/* 1. 상단 모임 분석 카드 */}
+                {selectedGroupId && (
+                  <AnalysisHeroCard>
+                    <AnalysisIcon>💡</AnalysisIcon>
+                    <AnalysisText>
+                      <strong>선택 모임 조건 매칭:</strong> {groups.find(g => g.id === selectedGroupId)?.name} <br />
+                      인원 {headcount}명 · 연령 {ageGroup} · 위치 {locationFilter} 정보를 기반으로 제휴 혜택을 매칭했습니다!
+                    </AnalysisText>
+                  </AnalysisHeroCard>
+                )}
+
+                {/* 2. 필터 조정 폼 */}
+                <FilterTuneArea>
+                  <FilterFieldRow>
+                    <FilterInputLabel>모임 선택</FilterInputLabel>
+                    <FilterSelect
+                      value={selectedGroupId}
+                      onChange={(e) => handleGroupSelect(e.target.value)}
+                    >
+                      <option value="" disabled>모임을 선택하세요</option>
+                      {groups.map(g => (
+                        <option key={g.id} value={g.id}>{g.name} ({g.memberCount}명)</option>
+                      ))}
+                    </FilterSelect>
+                  </FilterFieldRow>
+
+                  <FilterFieldRow>
+                    <FilterInputLabel>모임 인원</FilterInputLabel>
+                    <SegmentGroup>
+                      {[2, 4, 6, 10].map((num) => (
+                        <SegmentBtn
+                          key={num}
+                          type="button"
+                          className={
+                            (num === 2 && headcount <= 3) ||
+                            (num === 4 && headcount >= 4 && headcount <= 5) ||
+                            (num === 6 && headcount >= 6 && headcount <= 9) ||
+                            (num === 10 && headcount >= 10)
+                              ? 'active'
+                              : ''
+                          }
+                          onClick={() => setHeadcount(num)}
+                        >
+                          {num === 10 ? '10명+' : `${num}명`}
+                        </SegmentBtn>
+                      ))}
+                    </SegmentGroup>
+                  </FilterFieldRow>
+
+                  <FilterFieldRow>
+                    <FilterInputLabel>타겟 연령</FilterInputLabel>
+                    <SegmentGroup>
+                      {['20대 초반', '20대 후반', '30대 초반', '40대 이상'].map((age) => (
+                        <SegmentBtn
+                          key={age}
+                          type="button"
+                          className={ageGroup === age ? 'active' : ''}
+                          onClick={() => setAgeGroup(age)}
+                        >
+                          {age}
+                        </SegmentBtn>
+                      ))}
+                    </SegmentGroup>
+                  </FilterFieldRow>
+
+                  <FilterFieldRow>
+                    <FilterInputLabel>활동 위치</FilterInputLabel>
+                    <SegmentGroup>
+                      {['성수동', '홍대/합정', '여의도', '강남역'].map((loc) => (
+                        <SegmentBtn
+                          key={loc}
+                          type="button"
+                          className={locationFilter === loc ? 'active' : ''}
+                          onClick={() => setLocationFilter(loc)}
+                        >
+                          {loc.split('/')[0]}
+                        </SegmentBtn>
+                      ))}
+                    </SegmentGroup>
+                  </FilterFieldRow>
+                </FilterTuneArea>
+
+                <SubNotice>🎁 가맹 장소 방문 시 아래 제휴 혜택 배너를 제시해주세요!</SubNotice>
+
+                {/* 3. 제휴 추천 맛집 카드 리스트 */}
+                <PartnerExploreList>
+                  {displayPlaces.length === 0 ? (
+                    <EmptyState>선택한 조건의 추천 정보가 없습니다. 필터를 다르게 설정해 보세요.</EmptyState>
+                  ) : (
+                    displayPlaces.map((place) => {
+                      const hasCoupon = downloadedCoupons[place.id];
+                      const isShared = sharedPlaces[place.id];
+                      return (
+                        <PartnerCard key={place.id}>
+                          <PartnerCardTop>
+                            <PartnerEmojiBadge>{place.emoji}</PartnerEmojiBadge>
+                            <PartnerNameCol>
+                              <PartnerPlaceName>{place.name}</PartnerPlaceName>
+                              <PartnerTagBadge>{place.tag}</PartnerTagBadge>
+                            </PartnerNameCol>
+                            <PartnerLocTag>{place.location}</PartnerLocTag>
+                          </PartnerCardTop>
+
+                          <PartnerBenefitBox>
+                            <BenefitTag>제휴 혜택</BenefitTag>
+                            <BenefitText>{place.benefit}</BenefitText>
+                          </PartnerBenefitBox>
+
+                          <PartnerReasonText>
+                            <strong>추천 이유:</strong> {place.reason}
+                          </PartnerReasonText>
+
+                          <PartnerActionRow>
+                            <CouponBtn
+                              type="button"
+                              className={hasCoupon ? 'claimed' : ''}
+                              onClick={() => {
+                                if (hasCoupon) return;
+                                setDownloadedCoupons(prev => ({ ...prev, [place.id]: true }));
+                                showToast(`[${place.name.split(' (')[0]}] 제휴 쿠폰 발급 완료! 🎟️`, 'success', '🎟️');
+                              }}
+                            >
+                              {hasCoupon ? '쿠폰 발급 완료 ✅' : '제휴 쿠폰 받기 🎟️'}
+                            </CouponBtn>
+
+                            <ShareToGroupBtn
+                              type="button"
+                              className={isShared ? 'shared' : ''}
+                              onClick={() => {
+                                setSharedPlaces(prev => ({ ...prev, [place.id]: true }));
+                                showToast(`'${place.name.split(' (')[0]}' 정보를 모임방에 공유했습니다! 📲`, 'success', '📲');
+                              }}
+                            >
+                              {isShared ? '공유 완료 📲' : '모임방 공유 📤'}
+                            </ShareToGroupBtn>
+                          </PartnerActionRow>
+                        </PartnerCard>
+                      );
+                    })
+                  )}
+                </PartnerExploreList>
               </ContentContainer>
             )}
           </>
@@ -1012,9 +1315,284 @@ const InviteBtn = styled.button`
 
   &:hover { background: #f8fafc; border-color: #fedd13; }
 
+  &:hover { background: #f8fafc; border-color: #fedd13; }
+
   &.invited {
     background: #dbeafe;
     border-color: #3b82f6;
     color: #1e40af;
+  }
+`;
+
+/* ── 탭 3: 제휴 맛집/핫플 관련 스타일 컴포넌트 ── */
+const AnalysisHeroCard = styled.div`
+  background: #fdfaf3;
+  border: 1.5px solid #f4eedc;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(38, 38, 44, 0.02);
+`;
+
+const AnalysisIcon = styled.div`
+  font-size: 20px;
+  line-height: 1;
+`;
+
+const AnalysisText = styled.div`
+  font-size: 12.5px;
+  font-weight: 550;
+  line-height: 1.5;
+  color: #334155;
+  
+  strong {
+    color: #0f172a;
+    font-weight: 800;
+  }
+`;
+
+const FilterTuneArea = styled.div`
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+`;
+
+const FilterFieldRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const FilterInputLabel = styled.span`
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  width: 64px;
+  flex-shrink: 0;
+`;
+
+const FilterSelect = styled.select`
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1e293b;
+  outline: none;
+
+  &:focus {
+    border-color: #fedd13;
+  }
+`;
+
+const SegmentGroup = styled.div`
+  display: flex;
+  gap: 6px;
+  flex-grow: 1;
+`;
+
+const SegmentBtn = styled.button`
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1.5px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #334155;
+  }
+
+  &.active {
+    background: #fedd13;
+    color: #4c3c03;
+    border-color: #fedd13;
+    box-shadow: 0 2px 6px rgba(254, 221, 19, 0.2);
+  }
+`;
+
+const PartnerExploreList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+`;
+
+const PartnerCard = styled.div`
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 6px 14px rgba(38, 38, 44, 0.03);
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(38, 38, 44, 0.08);
+  }
+`;
+
+const PartnerCardTop = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const PartnerEmojiBadge = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #fffbeb;
+  border: 1.5px solid #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+`;
+
+const PartnerNameCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+`;
+
+const PartnerPlaceName = styled.span`
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #1e293b;
+`;
+
+const PartnerTagBadge = styled.span`
+  align-self: flex-start;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #8a7018;
+  background: #fef3c7;
+  padding: 1px 6px;
+  border-radius: 6px;
+`;
+
+const PartnerLocTag = styled.span`
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 3px 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+`;
+
+const PartnerBenefitBox = styled.div`
+  background: #fff8e6;
+  border: 1.5px dashed #fedd13;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const BenefitTag = styled.span`
+  font-size: 10px;
+  font-weight: 850;
+  color: #b45309;
+  text-transform: uppercase;
+`;
+
+const BenefitText = styled.span`
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #78350f;
+  line-height: 1.4;
+`;
+
+const PartnerReasonText = styled.p`
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #475569;
+  font-weight: 600;
+
+  strong {
+    color: #0f172a;
+    font-weight: 800;
+  }
+`;
+
+const PartnerActionRow = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+`;
+
+const CouponBtn = styled.button`
+  flex: 1.2;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fedd13;
+  color: #4c3c03;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #fada0a;
+  }
+
+  &.claimed {
+    background: #dcfce7;
+    color: #166534;
+    cursor: default;
+  }
+`;
+
+const ShareToGroupBtn = styled.button`
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  &.shared {
+    background: #f1f5f9;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+    cursor: default;
   }
 `;
