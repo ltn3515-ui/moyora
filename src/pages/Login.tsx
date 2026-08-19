@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { useToast } from '../components/Toast';
 import { useAppContext } from '../context/AppContext';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
 import imgLogoFull from '../assets/img_logo_full.png';
@@ -72,12 +72,18 @@ export const Login: React.FC = () => {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // 구글 로그인 시작 (Firebase Auth signInWithPopup 사용)
-  const handleGoogleLoginStart = async () => {
+  const handleGoogleLoginStart = async (forceSelectAccount: boolean = false) => {
     setIsGoogleLoading(true);
     showToast('Google 로그인을 진행하고 있습니다...', 'info', '🔄');
 
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      const provider = new GoogleAuthProvider();
+      if (forceSelectAccount) {
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
+      }
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
       if (user) {
@@ -308,13 +314,13 @@ export const Login: React.FC = () => {
                 </PillMeta>
               </GoogleAccountPill>
 
-              <OtherAccountBtn type="button" onClick={() => showToast('다른 계정 선택 창이 활성화됩니다.', 'info', '👤')}>
+              <OtherAccountBtn type="button" onClick={() => handleGoogleLoginStart(true)}>
                 👤+ 다른 계정 사용
               </OtherAccountBtn>
 
               <GoogleSubmitBlackBtn 
                 type="button" 
-                onClick={handleGoogleLoginStart}
+                onClick={() => handleGoogleLoginStart(false)}
                 disabled={isGoogleLoading}
               >
                 <GoogleOfficialGIcon size={18} />
