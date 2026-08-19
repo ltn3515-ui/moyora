@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
+import { useAppContext } from '../context/AppContext';
 import { TasteActivityModal } from '../components/Modal/TasteActivityModal';
 import { CalendarModal } from '../components/Modal/CalendarModal';
 import { UpcomingEventsModal } from '../components/Modal/UpcomingEventsModal';
@@ -25,6 +26,7 @@ interface FriendAvatar {
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { profile } = useAppContext();
   const [isTasteModalOpen, setIsTasteModalOpen] = useState(false);
   const [selectedTasteId, setSelectedTasteId] = useState<string | null>(null);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -33,7 +35,7 @@ export const Home: React.FC = () => {
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
 
   const friendsData: FriendAvatar[] = [
-    { id: 'me', label: '나의 활동', ring: '#FEDD13', photo: avatarMe || '/avatar_me_circle.png' },
+    { id: 'me', label: '나의 활동', ring: '#FEDD13', photo: profile.profileImage || avatarMe },
     { id: 'f1', label: '민수', ring: '#F491BC', photo: avatarF1 || '/avatar_f1_circle.png' },
     { id: 'f2', label: '지은', ring: '#8FC7E8', photo: avatarF2 || '/avatar_f2_circle.png' },
     { id: 'f3', label: '현우', ring: '#FEDD13', photo: avatarF3 || '/avatar_f3_circle.png' }

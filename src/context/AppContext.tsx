@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
+import avatarMe from '../assets/avatar_me_circle.png';
 import type {
   Profile,
   Group,
@@ -328,6 +331,9 @@ interface AppContextType {
   addGroup: (name: string, purpose: string, icon?: string) => void;
   joinGroupById: (groupId: string) => Group | null;
   updateProfile: (updated: Partial<Profile>) => void;
+  handleGoogleLogin: (forceSelectAccount?: boolean) => Promise<any>;
+  handleLogout: () => Promise<void>;
+  isGoogleLoading: boolean;
   updatePayoutAccount: (bankName: string, accountNumber: string, holderName: string) => void;
   toggleNotifications: () => void;
   toggleBlueBackground: () => void;
@@ -393,6 +399,46 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setProfile((prev) => ({
+          ...prev,
+          id: user.uid,
+          name: user.displayName || 'Google User',
+          email: user.email || '',
+          profileImage: user.photoURL || avatarMe,
+        }));
+      } else {
+        setProfile(initialProfile);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleGoogleLogin = async (forceSelectAccount: boolean = false) => {
+    setIsGoogleLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      if (forceSelectAccount) {
+        provider.setCustomParameters({
+          prompt: 'select_account'
+        });
+      }
+      const result = await signInWithPopup(auth, provider);
+      return result.user;
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
   const [groups, setGroups] = useState<Group[]>(initialGroups);
   const [friends] = useState<Friend[]>(initialFriends);
   const [recentSearches, setRecentSearches] = useState<string[]>(['오메라', '한강 피크닉', '홍대 맛집']);
@@ -607,6 +653,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addGroup,
         joinGroupById,
         updateProfile,
+        handleGoogleLogin,
+        handleLogout,
+        isGoogleLoading,
         updatePayoutAccount,
         toggleNotifications,
         toggleBlueBackground,

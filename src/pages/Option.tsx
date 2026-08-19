@@ -66,7 +66,7 @@ const OPTION_ICONS = {
 };
 
 export const Option: React.FC = () => {
-  const { profile, appSettings, payoutAccount, optionMenuSections, toggleNotifications, changeLanguage, toggleBlueBackground } = useAppContext();
+  const { profile, appSettings, payoutAccount, optionMenuSections, toggleNotifications, changeLanguage, toggleBlueBackground, handleLogout } = useAppContext();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -81,10 +81,15 @@ export const Option: React.FC = () => {
     } else if (item.key === 'account') {
       navigate('/account');
     } else if (item.key === 'logout') {
-      showToast('로그아웃 되었습니다. 안녕히 가세요! 👋', 'info');
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      handleLogout().then(() => {
+        showToast('로그아웃 되었습니다. 안녕히 가세요! 👋', 'info');
+        setTimeout(() => {
+          navigate('/login');
+        }, 800);
+      }).catch((err) => {
+        console.error('Logout error:', err);
+        showToast('로그아웃 도중 오류가 발생했습니다.', 'error');
+      });
     } else if (item.type === 'link') {
       if (item.label.includes('프로필')) {
         setIsProfileModalOpen(true);
@@ -101,7 +106,7 @@ export const Option: React.FC = () => {
       {/* 프로필 요약 카드 */}
       <ProfileSummaryCard>
         <AvatarContainer>
-          <img src={leetaenoAvatar} alt={profile.name} />
+          <img src={profile.profileImage || leetaenoAvatar} alt={profile.name} />
         </AvatarContainer>
         <ProfileBody>
           <ProfileName>{profile.name} 님</ProfileName>
