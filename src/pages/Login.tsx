@@ -626,59 +626,119 @@ export const Login: React.FC = () => {
       {/* ──────── 9. 구글 계정 선택 및 입력 모달창 (Google Account Chooser/Input Modal) ──────── */}
       {isAccountModalOpen && (
         <Overlay onClick={() => setIsAccountModalOpen(false)}>
-          <ModalCard onClick={(e) => e.stopPropagation()} style={{ maxWidth: 360, padding: '24px 20px' }}>
+          <ModalCard onClick={(e) => e.stopPropagation()} style={{ maxWidth: 360, padding: '24px 20px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
               <GoogleOfficialGIcon size={32} />
             </div>
             <ModalHeaderTitle style={{ textAlign: 'center', marginBottom: 6 }}>다른 계정 사용</ModalHeaderTitle>
             <ResetGuideText style={{ textAlign: 'center', color: '#6b7280', fontSize: 12, marginBottom: 16 }}>
-              사용할 구글 계정 정보를 입력하거나 실제 Google 인증을 진행하세요.
+              구글 계정을 직접 입력하거나 아래 목록에서 선택하세요.
             </ResetGuideText>
             
-            <ModalForm onSubmit={(e) => {
-              e.preventDefault();
-              if (customEmail && customName) {
-                handleMockAccountLogin(customName, customEmail, avatarMe);
-              }
-            }}>
-              <InputGroupField>
-                <FieldLabel>구글 이메일 주소</FieldLabel>
-                <InputWrapper>
-                  <TextInput
-                    type="email"
-                    placeholder="example@gmail.com"
-                    value={customEmail}
-                    onChange={(e) => setCustomEmail(e.target.value)}
-                    required
-                  />
-                </InputWrapper>
-              </InputGroupField>
-              
-              <InputGroupField>
-                <FieldLabel>이름 (닉네임)</FieldLabel>
-                <InputWrapper>
-                  <TextInput
-                    type="text"
-                    placeholder="홍길동"
-                    value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
-                    required
-                  />
-                </InputWrapper>
-              </InputGroupField>
+            {/* 1. 계정 직접 입력 양식 */}
+            <div style={{ background: '#f8fafc', padding: 12, borderRadius: 16, border: '1px solid #e2e8f0' }}>
+              <ModalForm onSubmit={(e) => {
+                e.preventDefault();
+                if (customEmail && customName) {
+                  handleMockAccountLogin(customName, customEmail, avatarMe);
+                }
+              }}>
+                <InputGroupField style={{ marginBottom: 8 }}>
+                  <FieldLabel style={{ fontSize: 11 }}>구글 이메일 주소</FieldLabel>
+                  <InputWrapper>
+                    <TextInput
+                      type="email"
+                      placeholder="example@gmail.com"
+                      value={customEmail}
+                      onChange={(e) => setCustomEmail(e.target.value)}
+                      required
+                      style={{ padding: '8px 12px', fontSize: 13 }}
+                    />
+                  </InputWrapper>
+                </InputGroupField>
+                
+                <InputGroupField style={{ marginBottom: 10 }}>
+                  <FieldLabel style={{ fontSize: 11 }}>이름 (닉네임)</FieldLabel>
+                  <InputWrapper>
+                    <TextInput
+                      type="text"
+                      placeholder="홍길동"
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      required
+                      style={{ padding: '8px 12px', fontSize: 13 }}
+                    />
+                  </InputWrapper>
+                </InputGroupField>
 
-              <SubmitYellowBtn type="submit" style={{ marginTop: 6 }}>
-                입력한 계정으로 로그인 (모의)
-              </SubmitYellowBtn>
-            </ModalForm>
+                <SubmitYellowBtn type="submit" style={{ padding: '10px', fontSize: 13, borderRadius: 12 }}>
+                  입력한 계정으로 로그인 (모의)
+                </SubmitYellowBtn>
+              </ModalForm>
+            </div>
 
-            <DividerLineRow style={{ margin: '14px 0' }}>
+            <DividerLineRow style={{ margin: '10px 0' }}>
               <Line />
-              <OrText>또는</OrText>
+              <OrText>또는 기존 계정 선택</OrText>
               <Line />
             </DividerLineRow>
 
-            {/* Real Firebase Google Login Option */}
+            {/* 2. 기존 모의 계정 선택 목록 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {/* Mock Account 1 */}
+              <div 
+                onClick={() => handleMockAccountLogin('김모요', 'moyora.user@gmail.com', avatarMe)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 12, 
+                  padding: '10px 12px', 
+                  borderRadius: 12, 
+                  border: '1px solid #e5e7eb', 
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+              >
+                <img src={avatarMe} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#374151' }}>김모요</span>
+                  <span style={{ fontSize: 10, color: '#6b7280' }}>moyora.user@gmail.com</span>
+                </div>
+              </div>
+
+              {/* Mock Account 2 */}
+              <div 
+                onClick={() => handleMockAccountLogin('이태노', 'leetaeno@gmail.com', avatarMe)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 12, 
+                  padding: '10px 12px', 
+                  borderRadius: 12, 
+                  border: '1px solid #e5e7eb', 
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+              >
+                <img src={avatarMe} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#374151' }}>이태노</span>
+                  <span style={{ fontSize: 10, color: '#6b7280' }}>leetaeno@gmail.com</span>
+                </div>
+              </div>
+            </div>
+
+            <DividerLineRow style={{ margin: '10px 0' }}>
+              <Line />
+              <OrText>또는 실제 로그인</OrText>
+              <Line />
+            </DividerLineRow>
+
+            {/* 3. Real Firebase Google Login Option */}
             <div 
               onClick={() => {
                 setIsAccountModalOpen(false);
@@ -688,7 +748,7 @@ export const Login: React.FC = () => {
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: 12, 
-                padding: '12px 14px', 
+                padding: '10px 12px', 
                 borderRadius: 12, 
                 border: '1px solid #4285f4', 
                 background: '#f0f7ff',
@@ -699,21 +759,21 @@ export const Login: React.FC = () => {
               onMouseLeave={(e) => e.currentTarget.style.background = '#f0f7ff'}
             >
               <div style={{ 
-                width: 36, 
-                height: 36, 
+                width: 32, 
+                height: 32, 
                 borderRadius: '50%', 
                 background: '#4285f4', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                fontSize: 16,
+                fontSize: 14,
                 color: '#fff'
               }}>
                 👤+
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#1e40af' }}>실제 Google 계정으로 로그인</span>
-                <span style={{ fontSize: 11, color: '#2563eb' }}>Firebase Auth 연동 로그인</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#1e40af' }}>실제 Google 계정으로 로그인</span>
+                <span style={{ fontSize: 10, color: '#2563eb' }}>Firebase Auth 연동 로그인</span>
               </div>
             </div>
             
@@ -722,11 +782,11 @@ export const Login: React.FC = () => {
               onClick={() => setIsAccountModalOpen(false)}
               style={{
                 marginTop: 12,
-                padding: '12px',
+                padding: '10px',
                 background: '#f3f4f6',
                 border: 'none',
                 borderRadius: 12,
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 700,
                 color: '#4b5563',
                 cursor: 'pointer',
