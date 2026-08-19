@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '../firebase/firebaseConfig';
+import { onAuthStateChanged, signOut, signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase/firebaseConfig';
 import avatarMe from '../assets/avatar_me_circle.png';
 import type {
   Profile,
@@ -402,6 +402,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   useEffect(() => {
+    if (!auth) {
+      console.warn('Firebase Auth is not initialized. Skipping session persistence setup.');
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setProfile((prev) => ({
@@ -422,13 +426,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const handleGoogleLogin = async (forceSelectAccount: boolean = false) => {
     setIsGoogleLoading(true);
     try {
-      const provider = new GoogleAuthProvider();
+      if (!auth || !googleProvider) {
+        throw new Error('Firebase 설정 환경 변수가 누락되었습니다. 프로젝트 루트의 .env 파일을 확인해 주세요.');
+      }
       if (forceSelectAccount) {
-        provider.setCustomParameters({
+        googleProvider.setCustomParameters({
           prompt: 'select_account'
         });
       }
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, googleProvider);
       return result.user;
     } finally {
       setIsGoogleLoading(false);
@@ -436,7 +442,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    } else {
+      setProfile(initialProfile);
+    }
   };
 
   const [groups, setGroups] = useState<Group[]>(initialGroups);
