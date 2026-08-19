@@ -132,6 +132,9 @@ export interface Moment {
   image: string | null;
   thumbnailColor: string;
   isFavorite: boolean;
+  description?: string;
+  location?: string;
+  tags?: string[];
 }
 
 export interface NotificationItem {

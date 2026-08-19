@@ -167,6 +167,11 @@ export const Home: React.FC = () => {
       <MostSharedModal
         isOpen={isMostSharedModalOpen}
         onClose={() => setIsMostSharedModalOpen(false)}
+        onOpenActivityDetail={(activity) => {
+          setIsMostSharedModalOpen(false);
+          setSelectedTasteId(activity.title);
+          setIsTasteModalOpen(true);
+        }}
       />
 
       {/* 6단계 신규 모임 생성 모달 */}

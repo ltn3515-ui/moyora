@@ -218,11 +218,66 @@ const initialSettlements: Settlement[] = [
 ];
 
 const initialSavedMoments: Moment[] = [
-  { id: 'mo-001', title: '한강 피크닉', date: '2026.05.12', year: '2026', image: 'picnic.png', thumbnailColor: 'pink', isFavorite: false },
-  { id: 'mo-002', title: '홍대 맛집 탐방', date: '2026.04.28', year: '2026', image: 'cafe.png', thumbnailColor: 'yellow', isFavorite: false },
-  { id: 'mo-003', title: '봄바람 페스티벌', date: '2025.03.15', year: '2025', image: 'festival.png', thumbnailColor: 'blue', isFavorite: false },
-  { id: 'mo-004', title: '다꾸 모임', date: '2025.02.01', year: '2025', image: 'boardgame.png', thumbnailColor: 'cream', isFavorite: true },
-  { id: 'mo-005', title: '남산 야경', date: '2025.01.20', year: '2025', image: 'namsan.png', thumbnailColor: 'gray', isFavorite: true }
+  { 
+    id: 'mo-001', 
+    title: '한강 피크닉', 
+    date: '2026.05.12', 
+    year: '2026', 
+    image: 'picnic.png', 
+    thumbnailColor: 'pink', 
+    isFavorite: false,
+    description: '날씨 좋은 봄날, 한강 공원에서 잔디밭에 돗자리를 펴고 맛있는 피크닉 도시락을 나누어 먹었습니다. 노을을 바라보며 시원한 강바람과 함께 힐링하는 완벽한 하루였습니다.',
+    location: '여의도 한강공원',
+    tags: ['피크닉', '노을맛집', '주말힐링', '도시락']
+  },
+  { 
+    id: 'mo-002', 
+    title: '홍대 맛집 탐방', 
+    date: '2026.04.28', 
+    year: '2026', 
+    image: 'cafe.png', 
+    thumbnailColor: 'yellow', 
+    isFavorite: false,
+    description: '아늑한 분위기의 카페에서 달콤한 디저트와 함께 깊은 풍미의 에스프레소를 즐겼습니다. 오랫동안 가보고 싶었던 맛집리스트 중 하나였는데, 기대 이상으로 따뜻한 분위기와 훌륭한 맛이었습니다.',
+    location: '홍대 커피클럽',
+    tags: ['디저트카페', '커피맛집', '홍대핫플', '카페투어']
+  },
+  { 
+    id: 'mo-003', 
+    title: '봄바람 페스티벌', 
+    date: '2025.03.15', 
+    year: '2025', 
+    image: 'festival.png', 
+    thumbnailColor: 'blue', 
+    isFavorite: false,
+    description: '화려한 조명과 신나는 음악이 가득했던 페스티벌 현장! 밤하늘을 수놓는 음악 비트와 함께 관객들과 하나되어 밤새도록 춤추고 노래하며 스트레스를 날려버린 날이었습니다.',
+    location: '난지 한강공원 젊음의 광장',
+    tags: ['라이브뮤직', '콘서트', '야외페스티벌', '꿀잼']
+  },
+  { 
+    id: 'mo-004', 
+    title: '다꾸 모임', 
+    date: '2025.02.01', 
+    year: '2025', 
+    image: 'boardgame.png', 
+    thumbnailColor: 'cream', 
+    isFavorite: true,
+    description: '각자 좋아하는 스티커와 다이어리를 잔뜩 들고 모였습니다. 서로의 스티커를 교환하고 꾸미기 팁을 공유하며, 잔잔한 음악 속에서 나만의 기록을 채워나가는 아기자기하고 집중도 높은 시간이었습니다.',
+    location: '서교동 크리에이티브 라운지',
+    tags: ['다이어리꾸미기', '스튜디오', '취미모임', '아날로그']
+  },
+  { 
+    id: 'mo-005', 
+    title: '남산 야경', 
+    date: '2025.01.20', 
+    year: '2025', 
+    image: 'namsan.png', 
+    thumbnailColor: 'gray', 
+    isFavorite: true,
+    description: '남산서울타워에 올라 한눈에 내려다보이는 서울의 환상적인 밤하늘과 불빛들을 감상했습니다. 빌딩 숲이 만들어내는 찬란한 야경을 배경으로 멋진 인생 사진도 남기고 시원한 밤공기를 마셨습니다.',
+    location: '남산서울타워 전망대',
+    tags: ['서울야경', '드라이브', '인생샷', '야경투어']
+  }
 ];
 
 const optionMenuSections: OptionMenuSection[] = [

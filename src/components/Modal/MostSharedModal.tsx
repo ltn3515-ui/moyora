@@ -103,6 +103,9 @@ export const MostSharedModal: React.FC<MostSharedModalProps> = ({
 
   const handleItemClick = (item: SharedActivityItem) => {
     setSelectedActivity(item);
+  };
+
+  const handlePolaroidClick = (item: SharedActivityItem) => {
     if (onOpenActivityDetail) {
       onOpenActivityDetail(item);
     } else {
@@ -164,7 +167,7 @@ export const MostSharedModal: React.FC<MostSharedModalProps> = ({
         ) : (
           /* ──────── 뷰 2: 활동 상세 폴라로이드 화면 ──────── */
           <PolaroidContent>
-            <PolaroidFrame>
+            <PolaroidFrame onClick={() => handlePolaroidClick(selectedActivity)}>
               <TapeEffect />
               <PolaroidPhotoBox>
                 <PolaroidImg src={(selectedActivity.image && IMAGE_MAP[selectedActivity.image]) || activityArt} alt={selectedActivity.title} />
@@ -433,6 +436,17 @@ const PolaroidFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: scale(1.02) rotate(1deg);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
 `;
 
 const TapeEffect = styled.div`

@@ -16,16 +16,44 @@ type PayMethodType = 'kakaopay' | 'tosspay' | 'bank_transfer' | 'card';
 interface PayMethodOption {
   id: PayMethodType;
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   color: string;
   badgeText: string;
 }
 
+const KAKAO_PAY_ICON = (
+  <img
+    src="/kakaopay.jpg"
+    alt="카카오페이"
+    style={{
+      width: '24px',
+      height: '24px',
+      borderRadius: '50%',
+      objectFit: 'cover',
+      display: 'block'
+    }}
+  />
+);
+
+const TOSS_PAY_ICON = (
+  <img
+    src="/tosspay.png"
+    alt="토스페이"
+    style={{
+      width: '24px',
+      height: '24px',
+      borderRadius: '50%',
+      objectFit: 'cover',
+      display: 'block'
+    }}
+  />
+);
+
 const PAY_METHODS: PayMethodOption[] = [
-  { id: 'kakaopay', name: '카카오페이', icon: '🟡', color: '#FEE500', badgeText: '간편 결제' },
-  { id: 'tosspay', name: '토스페이', icon: '🔵', color: '#0064FF', badgeText: '원클릭 송금' },
-  { id: 'bank_transfer', name: '직접 계좌 송금', icon: '🏦', color: '#334155', badgeText: '계좌 복사' },
-  { id: 'card', name: '신용 / 체크카드', icon: '💳', color: '#10B981', badgeText: '일반 결제' }
+  { id: 'kakaopay', name: '카카오페이', icon: KAKAO_PAY_ICON, color: '#FEE500', badgeText: '간편 결제' },
+  { id: 'tosspay', name: '토스페이', icon: TOSS_PAY_ICON, color: '#0064FF', badgeText: '원클릭 송금' },
+  { id: 'bank_transfer', name: '직접 계좌 송금', icon: <span style={{ fontSize: '18px' }}>🏦</span>, color: '#334155', badgeText: '계좌 복사' },
+  { id: 'card', name: '신용 / 체크카드', icon: <span style={{ fontSize: '18px' }}>💳</span>, color: '#10B981', badgeText: '일반 결제' }
 ];
 
 export const PaySettlementModal: React.FC<PaySettlementModalProps> = ({
@@ -512,8 +540,12 @@ const MethodCard = styled.button`
   }
 `;
 
-const MethodIcon = styled.span`
-  font-size: 22px;
+const MethodIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 `;
 

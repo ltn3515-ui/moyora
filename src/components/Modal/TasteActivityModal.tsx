@@ -167,6 +167,112 @@ const MOCK_ACTIVITIES: TasteActivityItem[] = [
       { name: '네오', avatar: 'neo_avatar.png' }
     ],
     description: '서울의 야경 스팟을 산책하고 사진을 찍으며 여유롭게 야경 피크닉을 즐기는 모임입니다.'
+  },
+  /* 아래 항목들은 인기 활동 리스트에서 탭했을 때 상세 화면으로 보여주기 위한 데이터 매핑입니다 */
+  {
+    id: 'shared-01',
+    title: '아트 페스티벌 수제 공예 전시',
+    date: '2026.08.20(목)',
+    category: '문화/예술',
+    icon: '🎨',
+    badgeColor: '#F491BC',
+    locationName: '인사동 아라아트센터',
+    locationAddress: '서울 종로구 인사동9길 26',
+    hostName: '이태노',
+    hostAvatar: 'avatar_leetaeno.png',
+    fee: 12000,
+    operatingHours: '11:00 ~ 19:00 (8시간 운영)',
+    capacity: 20,
+    currentCount: 12,
+    attendees: [
+      { name: '이태노', avatar: 'avatar_leetaeno.png' },
+      { name: '어피치', avatar: 'apeach_avatar.png' }
+    ],
+    description: '인기 공유 활동 1위! 손끝에서 피어나는 개성 넘치는 수제 공예품 전시를 둘러보며 다채로운 영감을 교감하는 문화 예술 소셜 모임입니다.'
+  },
+  {
+    id: 'shared-02',
+    title: '성수 카페거리 감성 출사 모임',
+    date: '2026.08.25(화)',
+    category: '출사/산책',
+    icon: '☕',
+    badgeColor: '#FFD3B6',
+    locationName: '성수동 대림창고 갤러리',
+    locationAddress: '서울 성동구 성수이로 74',
+    hostName: '어피치',
+    hostAvatar: 'apeach_avatar.png',
+    fee: 6000,
+    operatingHours: '14:00 ~ 17:00 (3시간 운영)',
+    capacity: 8,
+    currentCount: 5,
+    attendees: [
+      { name: '어피치', avatar: 'apeach_avatar.png' },
+      { name: '춘식이', avatar: 'choonsik_avatar.png' }
+    ],
+    description: '트렌디한 성수동 골목길과 개성 넘치는 카페들의 분위기를 필름 및 디지털 카메라에 담는 감성 출사 모임입니다.'
+  },
+  {
+    id: 'shared-03',
+    title: '여름 자작나무 숲 버스킹 라이브',
+    date: '2026.08.22(토)',
+    category: '야외활동',
+    icon: '🌲',
+    badgeColor: '#A8E6CF',
+    locationName: '인제 자작나무 숲 야외무대',
+    locationAddress: '강원 인제군 원대리 산 75-22',
+    hostName: '민수',
+    hostAvatar: 'avatar_f1_circle.png',
+    fee: 15000,
+    operatingHours: '10:00 ~ 18:00 (8시간 운영)',
+    capacity: 12,
+    currentCount: 8,
+    attendees: [
+      { name: '민수', avatar: 'avatar_f1_circle.png' },
+      { name: '지은', avatar: 'avatar_f2_circle.png' }
+    ],
+    description: '인제 자작나무 숲의 청량한 공기 속에서 울려 퍼지는 서정적인 버스킹 음악을 감상하고, 초록빛 자연과 함께 피크닉을 즐기며 힐링하는 아웃도어 소모임입니다.'
+  },
+  {
+    id: 'shared-04',
+    title: '한강 망원지구 피크닉 & 힐링',
+    date: '2026.08.29(토)',
+    category: '야외활동',
+    icon: '🧺',
+    badgeColor: '#8FC7E8',
+    locationName: '망원한강공원 잔디밭',
+    locationAddress: '서울 마포구 마포나루길 467',
+    hostName: '지은',
+    hostAvatar: 'avatar_f2_circle.png',
+    fee: 8000,
+    operatingHours: '16:00 ~ 20:00 (4시간 운영)',
+    capacity: 10,
+    currentCount: 6,
+    attendees: [
+      { name: '지은', avatar: 'avatar_f2_circle.png' },
+      { name: '현우', avatar: 'avatar_f3_circle.png' }
+    ],
+    description: '선선한 강바람이 불어오는 한강 공원에서 잔디밭에 돗자리를 펴고 맛있는 간식과 커피를 함께 즐기며, 붉게 물드는 노을을 감상하고 소통하는 힐링 모임입니다.'
+  },
+  {
+    id: 'shared-05',
+    title: '남산 타워 야경 사진 스팟 출사',
+    date: '2026.08.30(일)',
+    category: '출사/산책',
+    icon: '🌃',
+    badgeColor: '#FEDD13',
+    locationName: '남산타워 팔각정 광장',
+    locationAddress: '서울 용산구 남산공원길 105',
+    hostName: '현우',
+    hostAvatar: 'avatar_f3_circle.png',
+    fee: 5000,
+    operatingHours: '19:00 ~ 22:00 (3시간 운영)',
+    capacity: 15,
+    currentCount: 9,
+    attendees: [
+      { name: '현우', avatar: 'avatar_f3_circle.png' },
+      { name: '이태노', avatar: 'avatar_leetaeno.png' }
+    ],
+    description: '서울 도심의 불빛들이 화려하게 반짝이는 밤하늘을 조망하며, 남산의 숨겨진 사진 스팟을 탐방하고 영롱한 밤하늘 야경의 매력을 함께 촬영하는 출사 모임입니다.'
   }
 ];
 

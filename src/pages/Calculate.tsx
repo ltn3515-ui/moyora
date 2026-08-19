@@ -82,6 +82,7 @@ export const Calculate: React.FC = () => {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [isShareImageModalOpen, setIsShareImageModalOpen] = useState(false);
   const [isSplitCalcOpen, setIsSplitCalcOpen] = useState(false);
+  const [sheetFilter, setSheetFilter] = useState<'전체' | '정산완료' | '대기중'>('전체');
 
   const handleOpenDetail = (item?: Settlement) => {
     const target = item || (settlements && settlements.length > 0 ? settlements[0] : null);
@@ -276,7 +277,14 @@ export const Calculate: React.FC = () => {
             <SheetHandle />
             <SheetHeader>
               <SheetTitle>전체 정산 내역</SheetTitle>
-              <SheetCount>{settlements.length}건</SheetCount>
+              <SheetCount>
+                {settlements.filter((item) => {
+                  if (sheetFilter === '전체') return true;
+                  if (sheetFilter === '정산완료') return item.status === 'done';
+                  if (sheetFilter === '대기중') return item.status === 'pending';
+                  return true;
+                }).length}건
+              </SheetCount>
               <SheetCloseBtn onClick={() => setIsAllOpen(false)} aria-label="닫기">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6 6 18M6 6l12 12" />
@@ -284,42 +292,55 @@ export const Calculate: React.FC = () => {
               </SheetCloseBtn>
             </SheetHeader>
             <SheetFilterRow>
-              {['전체', '정산완료', '대기중'].map((f) => (
-                <SheetFilterChip key={f} className={f === '전체' ? 'active' : ''}>{f}</SheetFilterChip>
+              {(['전체', '정산완료', '대기중'] as const).map((f) => (
+                <SheetFilterChip 
+                  key={f} 
+                  className={f === sheetFilter ? 'active' : ''}
+                  onClick={() => setSheetFilter(f)}
+                >
+                  {f}
+                </SheetFilterChip>
               ))}
             </SheetFilterRow>
             <SheetList>
-              {settlements.map((item) => {
-                const isDone = item.status === 'done';
-                return (
-                  <SheetItem key={item.id} onClick={() => handleOpenDetail(item)}>
-                    <SettlementThumb>
-                      {item.thumbnail ? (
-                        <img src={THUMB_MAP[item.thumbnail]} alt={item.title} />
-                      ) : (
-                        item.emoji || '💰'
-                      )}
-                    </SettlementThumb>
-                    <SettlementBody>
-                      <SettlementTitleRow>
-                        <SettlementItemTitle>{item.title}</SettlementItemTitle>
-                        <SettlementStatus className={item.status}>
-                          {isDone ? '정산완료' : '대기중'}
-                        </SettlementStatus>
-                      </SettlementTitleRow>
-                      <SettlementMeta>{item.date} · {item.category}</SettlementMeta>
-                    </SettlementBody>
-                    <SettlementSide>
-                      <SettlementShareBtn onClick={(e) => { e.stopPropagation(); handleShareClick(item); }} aria-label={`${item.title} 공유`}>
-                        {ICON_SHARE_SMALL}
-                      </SettlementShareBtn>
-                      <SettlementAmount className={isDone ? 'positive' : ''}>
-                        {isDone ? '+' : ''}₩{formatThousands(item.amount)}
-                      </SettlementAmount>
-                    </SettlementSide>
-                  </SheetItem>
-                );
-              })}
+              {settlements
+                .filter((item) => {
+                  if (sheetFilter === '전체') return true;
+                  if (sheetFilter === '정산완료') return item.status === 'done';
+                  if (sheetFilter === '대기중') return item.status === 'pending';
+                  return true;
+                })
+                .map((item) => {
+                  const isDone = item.status === 'done';
+                  return (
+                    <SheetItem key={item.id} onClick={() => handleOpenDetail(item)}>
+                      <SettlementThumb>
+                        {item.thumbnail ? (
+                          <img src={THUMB_MAP[item.thumbnail]} alt={item.title} />
+                        ) : (
+                          item.emoji || '💰'
+                        )}
+                      </SettlementThumb>
+                      <SettlementBody>
+                        <SettlementTitleRow>
+                          <SettlementItemTitle>{item.title}</SettlementItemTitle>
+                          <SettlementStatus className={item.status}>
+                            {isDone ? '정산완료' : '대기중'}
+                          </SettlementStatus>
+                        </SettlementTitleRow>
+                        <SettlementMeta>{item.date} · {item.category}</SettlementMeta>
+                      </SettlementBody>
+                      <SettlementSide>
+                        <SettlementShareBtn onClick={(e) => { e.stopPropagation(); handleShareClick(item); }} aria-label={`${item.title} 공유`}>
+                          {ICON_SHARE_SMALL}
+                        </SettlementShareBtn>
+                        <SettlementAmount className={isDone ? 'positive' : ''}>
+                          {isDone ? '+' : ''}₩{formatThousands(item.amount)}
+                        </SettlementAmount>
+                      </SettlementSide>
+                    </SheetItem>
+                  );
+                })}
             </SheetList>
           </SheetPanel>
         </>

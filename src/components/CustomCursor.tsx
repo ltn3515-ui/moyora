@@ -1,31 +1,52 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 export const CustomCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    // 1. Detect if touch-only (mobile/tablet/devtools emulator without mouse)
+    const isTouchOnly =
+      window.matchMedia('(pointer: coarse)').matches &&
+      !window.matchMedia('(any-pointer: fine)').matches;
+
+    if (isTouchOnly) {
+      return;
+    }
+
+    // Enable custom cursor mode
+    setIsActive(true);
+    document.body.classList.add('custom-cursor-active');
+
     let mouseX = -200;
     let mouseY = -200;
     let ringX = -200;
     let ringY = -200;
     let rafId: number;
     let isHovering = false;
+    let isTouchActive = false;
+
+    const updateVisibility = (visible: boolean) => {
+      const opacity = visible && !isTouchActive ? '1' : '0';
+      if (cursorRef.current) cursorRef.current.style.opacity = opacity;
+      if (ringRef.current) ringRef.current.style.opacity = opacity;
+    };
 
     const onMouseMove = (e: MouseEvent) => {
+      isTouchActive = false;
       mouseX = e.clientX;
       mouseY = e.clientY;
+      updateVisibility(true);
     };
 
     const onMouseLeave = () => {
-      if (cursorRef.current) cursorRef.current.style.opacity = '0';
-      if (ringRef.current) ringRef.current.style.opacity = '0';
+      updateVisibility(false);
     };
 
     const onMouseEnter = () => {
-      if (cursorRef.current) cursorRef.current.style.opacity = '1';
-      if (ringRef.current) ringRef.current.style.opacity = '1';
+      updateVisibility(true);
     };
 
     const onMouseDown = () => {
@@ -36,6 +57,12 @@ export const CustomCursor: React.FC = () => {
     const onMouseUp = () => {
       if (cursorRef.current) cursorRef.current.classList.remove('pressed');
       if (ringRef.current) ringRef.current.classList.remove('pressed');
+    };
+
+    const onTouchStart = () => {
+      // Hide cursor on touch interaction to prevent stickiness/afterimages
+      isTouchActive = true;
+      updateVisibility(false);
     };
 
     const onHoverCheck = (e: MouseEvent) => {
@@ -56,12 +83,13 @@ export const CustomCursor: React.FC = () => {
 
     const animate = () => {
       if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
       }
-      ringX = lerp(ringX, mouseX, 0.1);
-      ringY = lerp(ringY, mouseY, 0.1);
+      // Increased lerp speed from 0.1 to 0.22 to reduce visual lag trail
+      ringX = lerp(ringX, mouseX, 0.22);
+      ringY = lerp(ringY, mouseY, 0.22);
       if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+        ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
       }
       rafId = requestAnimationFrame(animate);
     };
@@ -72,19 +100,24 @@ export const CustomCursor: React.FC = () => {
     document.addEventListener('mouseleave', onMouseLeave);
     document.addEventListener('mousedown', onMouseDown);
     document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
 
     rafId = requestAnimationFrame(animate);
 
     return () => {
+      document.body.classList.remove('custom-cursor-active');
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mousemove', onHoverCheck);
       document.removeEventListener('mouseenter', onMouseEnter);
       document.removeEventListener('mouseleave', onMouseLeave);
       document.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('touchstart', onTouchStart);
       cancelAnimationFrame(rafId);
     };
   }, []);
+
+  if (!isActive) return null;
 
   return (
     <>
@@ -140,6 +173,8 @@ const CursorFinger = styled.div`
   pointer-events: none;
   z-index: 99999;
   will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
   /* 핫스팟: 검지 손가락 끝 기준 */
   margin-left: -3px;
   margin-top: -3px;
@@ -171,6 +206,8 @@ const CursorRing = styled.div`
   pointer-events: none;
   z-index: 99998;
   will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
   transition: opacity 0.2s ease,
               width 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
               height 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),

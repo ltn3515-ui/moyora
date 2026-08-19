@@ -3,6 +3,8 @@ import styled, { keyframes } from 'styled-components';
 import { useAppContext } from '../../context/AppContext';
 import { useToast } from '../Toast';
 import { LocationSelectMapModal, type LocationPlace } from './LocationSelectMapModal';
+import { InviteFriendsModal } from './InviteFriendsModal';
+import type { Friend } from '../../types';
 
 import activityArt from '../../assets/activity_art.png';
 import cafeImg from '../../assets/cafe.png';
@@ -10,6 +12,30 @@ import festivalImg from '../../assets/festival.png';
 import avatarMe from '../../assets/avatar_me_circle.png';
 import avatarF1 from '../../assets/avatar_f1_circle.png';
 import avatarF2 from '../../assets/avatar_f2_circle.png';
+import avatarF3 from '../../assets/avatar_f3_circle.png';
+
+import neoAvatar from '../../assets/neo_avatar.png';
+import frodoAvatar from '../../assets/frodo_avatar.png';
+import muziAvatar from '../../assets/muzi_avatar.png';
+import conAvatar from '../../assets/con_avatar.png';
+import jaygAvatar from '../../assets/jayg_avatar.png';
+import apeachAvatar from '../../assets/apeach_avatar.png';
+import choonsikAvatar from '../../assets/choonsik_avatar.png';
+
+const AVATAR_MAP: Record<string, string> = {
+  'neo_avatar.png': neoAvatar || '/neo_avatar.png',
+  'frodo_avatar.png': frodoAvatar || '/frodo_avatar.png',
+  'muzi_avatar.png': muziAvatar || '/muzi_avatar.png',
+  'con_avatar.png': conAvatar || '/con_avatar.png',
+  'jayg_avatar.png': jaygAvatar || '/jayg_avatar.png',
+  'apeach_avatar.png': apeachAvatar || '/apeach_avatar.png',
+  'choonsik_avatar.png': choonsikAvatar || '/choonsik_avatar.png',
+  'avatar_leetaeno.png': avatarMe || '/avatar_me_circle.png',
+  'avatar_me_circle.png': avatarMe || '/avatar_me_circle.png',
+  'avatar_f1_circle.png': avatarF1 || '/avatar_f1_circle.png',
+  'avatar_f2_circle.png': avatarF2 || '/avatar_f2_circle.png',
+  'avatar_f3_circle.png': avatarF3 || '/avatar_f3_circle.png'
+};
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -43,6 +69,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
 
   // 장소 지도 모달 팝업 상태
   const [isMapModalOpen, setIsMapModalOpen] = useState<boolean>(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
+  const [selectedFriends, setSelectedFriends] = useState<Friend[]>([]);
 
   if (!isOpen) return null;
 
@@ -211,13 +239,32 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
                 </CounterControls>
               </CounterBox>
 
-              <InviteFriendsCard>
+              <InviteFriendsCard onClick={() => setIsInviteModalOpen(true)}>
                 <FriendAvatarGroup>
                   <img src={avatarMe} alt="나" />
-                  <img src={avatarF1} alt="친구1" />
-                  <img src={avatarF2} alt="친구2" />
+                  {selectedFriends.length > 0 ? (
+                    selectedFriends.slice(0, 2).map((friend) => (
+                      <img 
+                        key={friend.id}
+                        src={AVATAR_MAP[friend.profileImage] || avatarF1} 
+                        alt={friend.name} 
+                      />
+                    ))
+                  ) : (
+                    <>
+                      <img src={avatarF1} alt="친구1" />
+                      <img src={avatarF2} alt="친구2" />
+                    </>
+                  )}
+                  {selectedFriends.length > 2 && (
+                    <AvatarMoreBadge>+{selectedFriends.length - 2}</AvatarMoreBadge>
+                  )}
                 </FriendAvatarGroup>
-                <span>친구 목록에서 초대</span>
+                <span>
+                  {selectedFriends.length > 0 
+                    ? `${selectedFriends.length}명의 친구 초대됨` 
+                    : '친구 목록에서 초대'}
+                </span>
                 <ChevronRight>➔</ChevronRight>
               </InviteFriendsCard>
 
@@ -363,6 +410,17 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
         isOpen={isMapModalOpen}
         onClose={() => setIsMapModalOpen(false)}
         onSelectLocation={(place) => setSelectedPlace(place)}
+      />
+
+      {/* 친구 초대 모달 */}
+      <InviteFriendsModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+        groupName={groupName}
+        initiallySelectedIds={selectedFriends.map((f) => f.id)}
+        onInviteComplete={(friends) => {
+          setSelectedFriends(friends);
+        }}
       />
     </>
   );
@@ -675,6 +733,22 @@ const FriendAvatarGroup = styled.div`
 const ChevronRight = styled.span`
   font-size: 16px;
   color: #9d174d;
+`;
+
+const AvatarMoreBadge = styled.div`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  margin-right: -8px;
+  z-index: 5;
 `;
 
 const SearchTriggerBox = styled.div`

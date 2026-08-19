@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useAppContext } from '../../context/AppContext';
+import { MemoryDetailModal } from './MemoryDetailModal';
 
 import picnicImg from '../../assets/picnic.png';
 import cafeImg from '../../assets/cafe.png';
@@ -49,6 +50,7 @@ type FilterType = 'all' | '2026' | '2025' | 'favorite';
 export const MemoryModal: React.FC = () => {
   const { savedMoments, toggleFavoriteMoment, setMemoryOpen } = useAppContext();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [selectedMomentId, setSelectedMomentId] = useState<string | null>(null);
 
   // 필터링 적용
   const filteredMoments = savedMoments.filter((m) => {
@@ -112,14 +114,21 @@ export const MemoryModal: React.FC = () => {
         {/* 순간들 2열 그리드 */}
         <MemoryGrid className={filteredMoments.length === 0 ? 'empty' : ''}>
           {filteredMoments.map((item) => (
-            <MemoryCard key={item.id} className={item.thumbnailColor}>
+            <MemoryCard 
+              key={item.id} 
+              className={item.thumbnailColor}
+              onClick={() => setSelectedMomentId(item.id)}
+            >
               <PhotoWrap>
                 {item.image && (
                   <img src={MOMENT_IMAGES[item.image]} alt={item.title} />
                 )}
                 {/* 즐겨찾기 별 */}
                 <FavBtn 
-                  onClick={() => toggleFavoriteMoment(item.id)} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavoriteMoment(item.id);
+                  }} 
                   className={item.isFavorite ? 'fav' : ''}
                   aria-label="즐겨찾기 토글"
                 >
@@ -131,6 +140,14 @@ export const MemoryModal: React.FC = () => {
             </MemoryCard>
           ))}
         </MemoryGrid>
+
+        {/* 상세 내용 모달 */}
+        {selectedMomentId && (
+          <MemoryDetailModal 
+            momentId={selectedMomentId} 
+            onClose={() => setSelectedMomentId(null)} 
+          />
+        )}
       </ModalSheet>
     </ModalBackdrop>
   );
