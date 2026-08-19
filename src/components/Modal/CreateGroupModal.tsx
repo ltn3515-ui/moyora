@@ -117,7 +117,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
               )}
               <StepIndicatorBadge>{step} / 6 단계</StepIndicatorBadge>
             </HeaderTitleRow>
-            <CloseBtn onClick={onClose} aria-label="닫기">✕</CloseBtn>
+            <CloseBtn type="button" onClick={onClose} aria-label="닫기">✕</CloseBtn>
           </StepHeader>
 
           {/* 프로그레스 바 */}
@@ -182,7 +182,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
                 />
               </CustomInputBox>
 
-              {/* 직접입력 좌측/중앙 하단에 시인성 높인 다음 단계 버튼 배치 */}
               <Step1NextBtn type="button" onClick={handleNext}>
                 다음 단계로 →
               </Step1NextBtn>
@@ -243,13 +242,16 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
                 <FriendAvatarGroup>
                   <img src={avatarMe} alt="나" />
                   {selectedFriends.length > 0 ? (
-                    selectedFriends.slice(0, 2).map((friend) => (
-                      <img 
-                        key={friend.id}
-                        src={AVATAR_MAP[friend.profileImage] || avatarF1} 
-                        alt={friend.name} 
-                      />
-                    ))
+                    selectedFriends.slice(0, 2).map((friend) => {
+                      const avatarSrc = friend.profileImage ? (AVATAR_MAP[friend.profileImage] || friend.profileImage) : avatarF1;
+                      return (
+                        <img
+                          key={friend.id}
+                          src={avatarSrc}
+                          alt={friend.name}
+                        />
+                      );
+                    })
                   ) : (
                     <>
                       <img src={avatarF1} alt="친구1" />
@@ -261,8 +263,8 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
                   )}
                 </FriendAvatarGroup>
                 <span>
-                  {selectedFriends.length > 0 
-                    ? `${selectedFriends.length}명의 친구 초대됨` 
+                  {selectedFriends.length > 0
+                    ? `${selectedFriends.length}명의 친구 초대됨`
                     : '친구 목록에서 초대'}
                 </span>
                 <ChevronRight>➔</ChevronRight>
@@ -281,7 +283,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
               <StepTitle>어디서 만나실 건가요?</StepTitle>
               <StepSubtitle>모임의 만남 장소를 지도로 정확히 선택해주세요.</StepSubtitle>
 
-              {/* 클릭 시 장소 지도 모달 팝업 */}
               <SearchTriggerBox onClick={() => setIsMapModalOpen(true)}>
                 <SearchIcon>🔍</SearchIcon>
                 <span>장소 검색 (예: 강남역, 한강공원, 성수동)</span>

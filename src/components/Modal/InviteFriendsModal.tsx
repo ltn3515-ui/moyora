@@ -62,7 +62,7 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
 }) => {
   const { friends } = useAppContext();
   const { showToast } = useToast();
-  
+
   const [selectedIds, setSelectedIds] = useState<string[]>(initiallySelectedIds);
   const [searchQuery, setSearchQuery] = useState('');
   const [inviteMessage, setInviteMessage] = useState(
@@ -71,7 +71,7 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
 
   if (!isOpen) return null;
 
-  const filteredFriends = friends.filter((friend) =>
+  const filteredFriends = (friends || []).filter((friend) =>
     friend.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -89,9 +89,9 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
       return;
     }
 
-    const selectedFriends = friends.filter((f) => selectedIds.includes(f.id));
+    const selectedFriends = (friends || []).filter((f) => selectedIds.includes(f.id));
     onInviteComplete(selectedFriends, inviteMessage);
-    
+
     showToast(
       `✉️ ${selectedFriends.map((f) => f.name).join(', ')}님에게 초대 메시지를 전송했습니다!`,
       'success',
@@ -106,15 +106,15 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
         {/* 헤더 */}
         <ModalHeader>
           <HeaderTitle>친구 초대하기</HeaderTitle>
-          <CloseBtn onClick={onClose} aria-label="닫기">✕</CloseBtn>
+          <CloseBtn type="button" onClick={onClose} aria-label="닫기">✕</CloseBtn>
         </ModalHeader>
 
         {/* 친구 검색 */}
         <SearchBox>
           {ICON_SEARCH}
-          <SearchInput 
-            type="text" 
-            placeholder="친구 이름 검색..." 
+          <SearchInput
+            type="text"
+            placeholder="친구 이름 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -127,19 +127,21 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
           ) : (
             filteredFriends.map((friend) => {
               const isSelected = selectedIds.includes(friend.id);
+              const avatarSrc = friend.profileImage ? (AVATAR_MAP[friend.profileImage] || friend.profileImage) : avatarMe;
+
               return (
-                <FriendItem 
-                  key={friend.id} 
+                <FriendItem
+                  key={friend.id}
                   onClick={() => toggleSelectFriend(friend.id)}
                   className={isSelected ? 'selected' : ''}
                 >
                   <AvatarWrap className={friend.avatarColor}>
-                    <AvatarImg 
-                      src={AVATAR_MAP[friend.profileImage] || avatarMe} 
-                      alt={friend.name} 
+                    <AvatarImg
+                      src={avatarSrc}
+                      alt={friend.name}
                     />
                   </AvatarWrap>
-                  
+
                   <FriendInfo>
                     <FriendName>{friend.name}</FriendName>
                     <FriendStatus>{friend.statusMessage || '모요라에서 함께 소통해요!'}</FriendStatus>
@@ -159,8 +161,8 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
         {/* 초대 메시지 입력 영역 */}
         <MessageSection>
           <MessageTitle>초대 메시지</MessageTitle>
-          <MessageTextArea 
-            rows={3} 
+          <MessageTextArea
+            rows={3}
             value={inviteMessage}
             onChange={(e) => setInviteMessage(e.target.value)}
             placeholder="친구에게 보낼 초대 메시지를 적어주세요."
@@ -168,12 +170,13 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
         </MessageSection>
 
         {/* 전송 버튼 */}
-        <SubmitBtn 
+        <SubmitBtn
+          type="button"
           onClick={handleSendInvite}
           disabled={selectedIds.length === 0}
         >
-          {selectedIds.length > 0 
-            ? `${selectedIds.length}명에게 초대 메시지 전송` 
+          {selectedIds.length > 0
+            ? `${selectedIds.length}명에게 초대 메시지 전송`
             : '초대할 친구를 선택해주세요'}
         </SubmitBtn>
       </ModalCard>
@@ -290,7 +293,6 @@ const FriendsList = styled.div`
   overflow-y: auto;
   padding-right: 2px;
 
-  /* 스크롤바 커스텀 */
   &::-webkit-scrollbar {
     width: 4px;
   }

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useAppContext } from '../../context/AppContext';
-import type { Moment } from '../../types';
 
 import picnicImg from '../../assets/picnic.png';
 import cafeImg from '../../assets/cafe.png';
@@ -61,11 +60,12 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ momentId, 
       <Sheet onClick={(e) => e.stopPropagation()} className={momentItem.thumbnailColor}>
         {/* 상단 액션 바 */}
         <TopBar>
-          <CloseBtn onClick={onClose} aria-label="닫기">
+          <CloseBtn type="button" onClick={onClose} aria-label="닫기">
             {ICON_X}
           </CloseBtn>
-          <FavBtn 
-            onClick={() => toggleFavoriteMoment(momentItem.id)} 
+          <FavBtn
+            type="button"
+            onClick={() => toggleFavoriteMoment(momentItem.id)}
             className={momentItem.isFavorite ? 'fav' : ''}
             aria-label="즐겨찾기 토글"
           >
@@ -76,7 +76,7 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ momentId, 
         {/* 이미지 영역 */}
         <ImageSection>
           {momentItem.image && (
-            <img src={MOMENT_IMAGES[momentItem.image]} alt={momentItem.title} />
+            <img src={MOMENT_IMAGES[momentItem.image] || momentItem.image} alt={momentItem.title} />
           )}
         </ImageSection>
 
@@ -119,7 +119,7 @@ export const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ momentId, 
 
         {/* 하단 확인 버튼 */}
         <FooterSection>
-          <ConfirmBtn onClick={onClose}>돌아가기</ConfirmBtn>
+          <ConfirmBtn type="button" onClick={onClose}>돌아가기</ConfirmBtn>
         </FooterSection>
       </Sheet>
     </Backdrop>
