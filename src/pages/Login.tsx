@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { useToast } from '../components/Toast';
+import { useAppContext } from '../context/AppContext';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase';
 
 import imgLogoFull from '../assets/img_logo_full.png';
 import avatarMe from '../assets/avatar_me_circle.png';
@@ -32,6 +35,8 @@ type LoginStep = 'kakao' | 'email' | 'google' | 'signup' | 'trouble';
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { updateProfile } = useAppContext();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // 로그인 단계 상태관리
   const [step, setStep] = useState<LoginStep>('kakao');
@@ -62,6 +67,39 @@ export const Login: React.FC = () => {
   const [resetNewPw, setResetNewPw] = useState('');
   const [resetNewPwConfirm, setResetNewPwConfirm] = useState('');
   const [showResetPw, setShowResetPw] = useState(false);
+
+  // 구글 로그인 연동 상태
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  // 구글 로그인 시작 (Firebase Auth signInWithPopup 사용)
+  const handleGoogleLoginStart = async () => {
+    setIsGoogleLoading(true);
+    showToast('Google 로그인을 진행하고 있습니다...', 'info', '🔄');
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      if (user) {
+        // AppContext 업데이트
+        updateProfile({
+          name: user.displayName || '구글 사용자',
+          email: user.email || '',
+          profileImage: user.photoURL || avatarMe,
+        });
+
+        showToast(`${user.displayName || '구글 사용자'}님, Google 로그인에 성공하였습니다! 🎉`, 'success', '🎉');
+        setTimeout(() => {
+          navigate('/home');
+        }, 800);
+      }
+    } catch (error: any) {
+      console.error('Google Auth Error:', error);
+      showToast(`Google 로그인 오류: ${error.message || '네트워크 오류'}`, 'error', '⚠️');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   // 랜덤 닉네임 생성기
   const handleGenerateNickname = () => {
@@ -274,9 +312,13 @@ export const Login: React.FC = () => {
                 👤+ 다른 계정 사용
               </OtherAccountBtn>
 
-              <GoogleSubmitBlackBtn type="button" onClick={() => handleCompleteLogin('Google')}>
+              <GoogleSubmitBlackBtn 
+                type="button" 
+                onClick={handleGoogleLoginStart}
+                disabled={isGoogleLoading}
+              >
                 <GoogleOfficialGIcon size={18} />
-                <span>Google 계정으로 계속</span>
+                <span>{isGoogleLoading ? '로그인 처리 중...' : 'Google 계정으로 계속'}</span>
               </GoogleSubmitBlackBtn>
             </GoogleAuthBoxCard>
 
