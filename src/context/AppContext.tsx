@@ -402,10 +402,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   useEffect(() => {
-    if (!auth) {
-      console.warn('Firebase Auth is not initialized. Skipping session persistence setup.');
-      return;
-    }
+    if (!auth) return;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setProfile((prev) => ({
@@ -415,19 +412,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           email: user.email || '',
           profileImage: user.photoURL || avatarMe,
         }));
-      } else {
-        setProfile(initialProfile);
       }
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleGoogleLogin = async (forceSelectAccount: boolean = false) => {
+  const handleGoogleLogin = async (forceSelectAccount: boolean = true) => {
     setIsGoogleLoading(true);
     try {
       if (!auth || !googleProvider) {
-        throw new Error('Firebase 설정 환경 변수가 누락되었습니다. 프로젝트 루트의 .env 파일을 확인해 주세요.');
+        const err: any = new Error('Firebase API Key 설정이 올바르지 않습니다.');
+        err.code = 'auth/invalid-api-key';
+        throw err;
       }
       if (forceSelectAccount) {
         googleProvider.setCustomParameters({
@@ -435,6 +432,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
       }
       const result = await signInWithPopup(auth, googleProvider);
+      if (result.user) {
+        setProfile((prev) => ({
+          ...prev,
+          id: result.user.uid,
+          name: result.user.displayName || 'Google User',
+          email: result.user.email || '',
+          profileImage: result.user.photoURL || avatarMe,
+        }));
+      }
       return result.user;
     } finally {
       setIsGoogleLoading(false);
@@ -444,9 +450,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const handleLogout = async () => {
     if (auth) {
       await signOut(auth);
-    } else {
-      setProfile(initialProfile);
     }
+    setProfile(initialProfile);
   };
 
   const [groups, setGroups] = useState<Group[]>(initialGroups);

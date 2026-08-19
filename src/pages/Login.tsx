@@ -68,7 +68,7 @@ export const Login: React.FC = () => {
   const [showResetPw, setShowResetPw] = useState(false);
 
   // 구글 로그인 시작 (Firebase Auth signInWithPopup 사용)
-  const handleGoogleLoginStart = async (forceSelectAccount: boolean = false) => {
+  const handleGoogleLoginStart = async (forceSelectAccount: boolean = true) => {
     showToast('Google 로그인을 진행하고 있습니다...', 'info', '🔄');
 
     try {
@@ -88,10 +88,16 @@ export const Login: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Google Auth Error:', error);
-      if (error.code === 'auth/popup-closed-by-user') {
+      if (error?.code === 'auth/popup-closed-by-user') {
         showToast('사용자가 로그인 팝업창을 닫았습니다.', 'error', '⚠️');
+      } else if (error?.code === 'auth/popup-blocked') {
+        showToast('팝업창이 브라우저에 의해 차단되었습니다. 팝업 차단을 해제해 주세요.', 'error', '⚠️');
+      } else if (error?.code === 'auth/cancelled-popup-request') {
+        showToast('로그인 요청이 이미 진행 중입니다.', 'error', '⚠️');
+      } else if (error?.code === 'auth/invalid-api-key' || error?.code === 'auth/api-key-not-valid') {
+        showToast('Firebase API Key 설정이 올바르지 않습니다. .env 파일의 Firebase 환경 변수를 확인해 주세요.', 'error', '⚠️');
       } else {
-        showToast(`Google 로그인 오류: ${error.message || '네트워크 오류'}`, 'error', '⚠️');
+        showToast(`Google 로그인 오류: ${error?.message || '로그인 중 오류가 발생했습니다.'}`, 'error', '⚠️');
       }
     }
   };
