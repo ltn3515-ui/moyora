@@ -243,7 +243,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onCl
                   <img src={avatarMe} alt="나" />
                   {selectedFriends.length > 0 ? (
                     selectedFriends.slice(0, 2).map((friend) => {
-                      const avatarSrc = friend.profileImage ? (AVATAR_MAP[friend.profileImage] || friend.profileImage) : avatarF1;
+                      const avatarKey = friend.profileImage ?? '';
+                      const avatarSrc = avatarKey && AVATAR_MAP[avatarKey] ? AVATAR_MAP[avatarKey] : avatarF1;
+
                       return (
                         <img
                           key={friend.id}

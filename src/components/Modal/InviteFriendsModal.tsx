@@ -127,7 +127,8 @@ export const InviteFriendsModal: React.FC<InviteFriendsModalProps> = ({
           ) : (
             filteredFriends.map((friend) => {
               const isSelected = selectedIds.includes(friend.id);
-              const avatarSrc = friend.profileImage ? (AVATAR_MAP[friend.profileImage] || friend.profileImage) : avatarMe;
+              const avatarKey = friend.profileImage ?? '';
+              const avatarSrc = avatarKey && AVATAR_MAP[avatarKey] ? AVATAR_MAP[avatarKey] : avatarMe;
 
               return (
                 <FriendItem
