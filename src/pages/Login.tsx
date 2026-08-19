@@ -200,7 +200,7 @@ export const Login: React.FC = () => {
                 <MethodChipBtn type="button" onClick={() => setStep('email')}>
                   ✉️ 이메일 로그인
                 </MethodChipBtn>
-                <MethodChipBtn type="button" onClick={() => setStep('google')}>
+                <MethodChipBtn type="button" onClick={() => handleGoogleLoginStart(false)}>
                   <GoogleOfficialGIcon size={16} /> 구글 로그인
                 </MethodChipBtn>
               </MethodRowGroup>
