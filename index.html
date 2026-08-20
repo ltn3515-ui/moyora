@@ -11,6 +11,42 @@
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Live Server / 정적 실행 감지 및 에러 안내 폴백 -->
+    <div id="error-fallback" style="display:none; max-width: 440px; margin: 40px auto; padding: 24px; background: #fff5f5; color: #c53030; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border: 1px solid #feb2b2; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+        ⚠️ 실행 오류 안내
+      </h3>
+      <p style="margin-top: 0; margin-bottom: 16px; font-size: 14px; line-height: 1.6; color: #742a2a;">
+        React(Vite+TS) 프로젝트는 <strong>Live Server</strong>나 <strong>file:// (더블 클릭)</strong> 방식으로 직접 실행하면 화면이 표시되지 않습니다. 브라우저가 컴파일되지 않은 TypeScript(.tsx) 코드를 실행하려고 시도하여 에러가 발생합니다.
+      </p>
+      <div style="background: #2d3748; color: #fff; padding: 14px 16px; border-radius: 8px; font-family: monospace; font-size: 13px; line-height: 1.5; margin-bottom: 16px; overflow-x: auto;">
+        # 실행 방법:<br>
+        1. 터미널(VS Code 등)을 엽니다.<br>
+        2. <span style="color: #ecc94b; font-weight: bold;">npm run dev</span> 명령어를 입력합니다.<br>
+        3. 터미널에 표시되는 주소(<span style="color: #63b3ed; text-decoration: underline;">http://localhost:5173</span>)로 브라우저에서 접속합니다.
+      </div>
+      <p id="error-details" style="margin: 0; font-size: 11px; color: #a0aec0; word-break: break-all; font-family: monospace;"></p>
+    </div>
+
+    <script>
+      // 1. 프로토콜 검사 (file://)
+      if (window.location.protocol === 'file:') {
+        document.getElementById('error-fallback').style.display = 'block';
+      }
+      
+      // 2. 스크립트 실행 에러 감지 (예: .tsx 파싱 에러)
+      window.addEventListener('error', function(e) {
+        var fallback = document.getElementById('error-fallback');
+        var details = document.getElementById('error-details');
+        if (fallback) {
+          fallback.style.display = 'block';
+          if (details && e.message) {
+            details.textContent = '상세 에러: ' + e.message + (e.filename ? ' (' + e.filename + ')' : '');
+          }
+        }
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
