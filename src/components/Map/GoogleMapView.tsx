@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+import { useToast } from '../Toast';
 
 interface GoogleMapViewProps {
   locationName: string;
@@ -28,6 +29,8 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   const [zoomLevel, setZoomLevel] = useState<number>(initialZoom);
   const [searchInput, setSearchInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
+  const { showToast } = useToast();
 
   // Construct search query for Google Maps
   const query = lat && lng 
@@ -56,100 +59,211 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     }
   };
 
+  const handleCopyAddress = () => {
+    const textToCopy = address ? `${locationName} (${address})` : locationName;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      showToast('주소가 클립보드에 복사되었습니다! 📋', 'success', '📋');
+    }).catch(() => {
+      showToast('주소 복사에 실패했습니다.', 'error');
+    });
+  };
+
   return (
-    <MapWrapper style={{ height }}>
-      {/* 검색 바 (옵션) */}
-      {showSearch && (
-        <SearchForm onSubmit={handleSearchSubmit}>
-          <SearchIcon>🔍</SearchIcon>
-          <SearchInput
-            type="text"
-            placeholder="구글 지도 장소/주소 검색..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-          <SearchBtn type="submit">검색</SearchBtn>
-        </SearchForm>
+    <>
+      <MapWrapper style={{ height }}>
+        {/* 검색 바 (옵션) */}
+        {showSearch && (
+          <SearchForm onSubmit={handleSearchSubmit}>
+            <SearchIcon>🔍</SearchIcon>
+            <SearchInput
+              type="text"
+              placeholder="구글 지도 장소/주소 검색..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <SearchBtn type="submit">검색</SearchBtn>
+          </SearchForm>
+        )}
+
+        {/* Google Maps 배지 & 컨트롤 바 */}
+        <MapHeaderBar>
+          <GoogleBadge onClick={() => setIsMobileModalOpen(true)} title="모바일 모드로 지도 크게 보기">
+            <GoogleGLogo viewBox="0 0 24 24" width="14" height="14">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </GoogleGLogo>
+            <BadgeText>Google Maps</BadgeText>
+            <LiveDot title="실시간 구글 지도 연동 중" />
+          </GoogleBadge>
+
+          <HeaderControls>
+            {/* 지도 / 위성 모드 전환 */}
+            <TypeToggleBtn
+              type="button"
+              className={mapType === 'm' ? 'active' : ''}
+              onClick={() => setMapType('m')}
+            >
+              지도
+            </TypeToggleBtn>
+            <TypeToggleBtn
+              type="button"
+              className={mapType === 'k' ? 'active' : ''}
+              onClick={() => setMapType('k')}
+            >
+              위성
+            </TypeToggleBtn>
+
+            {/* 모바일 지도 보기 버튼 */}
+            <MobileExpandBtn
+              type="button"
+              onClick={() => setIsMobileModalOpen(true)}
+              title="모바일 모드로 지도 확대하기"
+            >
+              📱 모바일 지도
+            </MobileExpandBtn>
+
+            {/* 외부 구글 지도 / 길찾기 링크 */}
+            <ExternalLinkHref
+              href={externalMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="구글 지도 앱에서 길찾기 및 상세보기"
+            >
+              📍 길찾기 ↗
+            </ExternalLinkHref>
+          </HeaderControls>
+        </MapHeaderBar>
+
+        {/* 로딩 인디케이터 */}
+        {isLoading && (
+          <LoadingOverlay>
+            <LoadingSpinner />
+            <LoadingText>구글 지도 로딩 중...</LoadingText>
+          </LoadingOverlay>
+        )}
+
+        {/* 클릭 가능한 모바일 확대 클릭 힌트 배지 */}
+        <MapClickOverlayHint onClick={() => setIsMobileModalOpen(true)} title="클릭하여 모바일 전용 지도로 보기">
+          <span>📱 지도를 클릭하면 모바일 화면에 맞춰 확대됩니다</span>
+          <ExpandArrow>↗</ExpandArrow>
+        </MapClickOverlayHint>
+
+        {/* 구글 지도 프레임 */}
+        <MapFrame
+          src={embedUrl}
+          title={`Google Map - ${locationName}`}
+          onLoad={() => setIsLoading(false)}
+        />
+
+        {/* 오버레이 줌 컨트롤 & 장소 태그 */}
+        {showControls && (
+          <>
+            <ZoomControlGroup>
+              <ZoomBtn type="button" onClick={handleZoomIn} title="확대">+</ZoomBtn>
+              <ZoomDivider />
+              <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
+            </ZoomControlGroup>
+
+            <LocationPill onClick={() => setIsMobileModalOpen(true)} title="클릭 시 모바일 모드 지도로 확대">
+              <PillIcon>📍</PillIcon>
+              <PillInfo>
+                <PillTitle>{locationName} <ClickNoticeBadge>모바일 뷰 ↗</ClickNoticeBadge></PillTitle>
+                {address && <PillAddress>{address}</PillAddress>}
+              </PillInfo>
+            </LocationPill>
+          </>
+        )}
+      </MapWrapper>
+
+      {/* 📱 모바일 모드 전용 지도 확답 모달 */}
+      {isMobileModalOpen && (
+        <MobileModalOverlay onClick={() => setIsMobileModalOpen(false)}>
+          <MobileModalCard onClick={(e) => e.stopPropagation()}>
+            <MobileTopHeaderBar>
+              <MobileHeaderTitleGroup>
+                <MobileStatusBadge>📱 모바일 맞춤 지도 뷰어</MobileStatusBadge>
+                <MobileLocationName>{locationName}</MobileLocationName>
+                {address && <MobileAddressSub>{address}</MobileAddressSub>}
+              </MobileHeaderTitleGroup>
+              <MobileCloseBtn onClick={() => setIsMobileModalOpen(false)} aria-label="닫기">✕</MobileCloseBtn>
+            </MobileTopHeaderBar>
+
+            <MobileActionBar>
+              <ControlGroupLeft>
+                <TypeToggleBtn
+                  type="button"
+                  className={mapType === 'm' ? 'active' : ''}
+                  onClick={() => setMapType('m')}
+                >
+                  지도
+                </TypeToggleBtn>
+                <TypeToggleBtn
+                  type="button"
+                  className={mapType === 'k' ? 'active' : ''}
+                  onClick={() => setMapType('k')}
+                >
+                  위성
+                </TypeToggleBtn>
+              </ControlGroupLeft>
+              <ControlGroupRight>
+                <CopyAddrBtn type="button" onClick={handleCopyAddress}>
+                  📋 주소 복사
+                </CopyAddrBtn>
+                <MobileExternalLink
+                  href={externalMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  📍 길찾기 ↗
+                </MobileExternalLink>
+              </ControlGroupRight>
+            </MobileActionBar>
+
+            <MobileMapContentFrame>
+              <MapFrame
+                src={embedUrl}
+                title={`Google Map Mobile View - ${locationName}`}
+              />
+              <ZoomControlGroup style={{ bottom: '88px', right: '16px' }}>
+                <ZoomBtn type="button" onClick={handleZoomIn} title="확대">+</ZoomBtn>
+                <ZoomDivider />
+                <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
+              </ZoomControlGroup>
+
+              <MobileBottomPillCard>
+                <PillIconLarge>📍</PillIconLarge>
+                <MobilePillTextContent>
+                  <MobilePillTitle>{locationName}</MobilePillTitle>
+                  <MobilePillAddr>{address || '위치 정보를 확인하세요.'}</MobilePillAddr>
+                </MobilePillTextContent>
+                <MobileBottomCta
+                  href={externalMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  길찾기 ↗
+                </MobileBottomCta>
+              </MobileBottomPillCard>
+            </MobileMapContentFrame>
+          </MobileModalCard>
+        </MobileModalOverlay>
       )}
-
-      {/* Google Maps 배지 & 컨트롤 바 */}
-      <MapHeaderBar>
-        <GoogleBadge>
-          <GoogleGLogo viewBox="0 0 24 24" width="14" height="14">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </GoogleGLogo>
-          <BadgeText>Google Maps</BadgeText>
-          <LiveDot title="실시간 구글 지도 연동 중" />
-        </GoogleBadge>
-
-        <HeaderControls>
-          {/* 지도 / 위성 모드 전환 */}
-          <TypeToggleBtn
-            type="button"
-            className={mapType === 'm' ? 'active' : ''}
-            onClick={() => setMapType('m')}
-          >
-            지도
-          </TypeToggleBtn>
-          <TypeToggleBtn
-            type="button"
-            className={mapType === 'k' ? 'active' : ''}
-            onClick={() => setMapType('k')}
-          >
-            위성
-          </TypeToggleBtn>
-
-          {/* 외부 구글 지도 / 길찾기 링크 */}
-          <ExternalLinkHref
-            href={externalMapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="구글 지도 앱에서 길찾기 및 상세보기"
-          >
-            📍 길찾기 ↗
-          </ExternalLinkHref>
-        </HeaderControls>
-      </MapHeaderBar>
-
-      {/* 로딩 인디케이터 */}
-      {isLoading && (
-        <LoadingOverlay>
-          <LoadingSpinner />
-          <LoadingText>구글 지도 로딩 중...</LoadingText>
-        </LoadingOverlay>
-      )}
-
-      {/* 구글 지도 프레임 */}
-      <MapFrame
-        src={embedUrl}
-        title={`Google Map - ${locationName}`}
-        onLoad={() => setIsLoading(false)}
-      />
-
-      {/* 오버레이 줌 컨트롤 & 장소 태그 */}
-      {showControls && (
-        <>
-          <ZoomControlGroup>
-            <ZoomBtn type="button" onClick={handleZoomIn} title="확대">+</ZoomBtn>
-            <ZoomDivider />
-            <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
-          </ZoomControlGroup>
-
-          <LocationPill>
-            <PillIcon>📍</PillIcon>
-            <PillInfo>
-              <PillTitle>{locationName}</PillTitle>
-              {address && <PillAddress>{address}</PillAddress>}
-            </PillInfo>
-          </LocationPill>
-        </>
-      )}
-    </MapWrapper>
+    </>
   );
 };
+
+// Keyframes for Modal Animation
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const slideUp = keyframes`
+  from { transform: translateY(30px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+`;
 
 // Styled Components
 const MapWrapper = styled.div`
@@ -161,7 +275,7 @@ const MapWrapper = styled.div`
   background: #eef2f6;
   display: flex;
   flex-direction: column;
-  box-sizing: border-border;
+  box-sizing: border-box;
 `;
 
 const SearchForm = styled.form`
@@ -232,6 +346,12 @@ const GoogleBadge = styled.div`
   padding: 3px 8px;
   border-radius: 20px;
   border: 1px solid #e2e8f0;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
 `;
 
 const GoogleGLogo = styled.svg`
@@ -279,6 +399,24 @@ const TypeToggleBtn = styled.button`
 
   &:hover:not(.active) {
     background: #e2e8f0;
+  }
+`;
+
+const MobileExpandBtn = styled.button`
+  background: #fedd13;
+  color: #1e293b;
+  border: 1px solid #eab308;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 4px rgba(254, 221, 19, 0.35);
+
+  &:hover {
+    background: #f5cf00;
+    transform: translateY(-1px);
   }
 `;
 
@@ -332,6 +470,39 @@ const LoadingText = styled.span`
   font-size: 12px;
   color: #64748b;
   font-weight: 600;
+`;
+
+const MapClickOverlayHint = styled.div`
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: #fedd13;
+    color: #fedd13;
+    transform: translateX(-50%) translateY(-2px);
+  }
+`;
+
+const ExpandArrow = styled.span`
+  font-size: 12px;
 `;
 
 const MapFrame = styled.iframe`
@@ -398,6 +569,13 @@ const LocationPill = styled.div`
   gap: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(15, 23, 42, 0.96);
+    border-color: #fedd13;
+  }
 `;
 
 const PillIcon = styled.span`
@@ -417,6 +595,18 @@ const PillTitle = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const ClickNoticeBadge = styled.span`
+  font-size: 10px;
+  background: #fedd13;
+  color: #111827;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-weight: 800;
 `;
 
 const PillAddress = styled.span`
@@ -425,4 +615,213 @@ const PillAddress = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+/* ── 모바일 전용 확장 지도 모달 스타일 ── */
+const MobileModalOverlay = styled.div`
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: ${fadeIn} 0.2s ease-out forwards;
+`;
+
+const MobileModalCard = styled.div`
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  height: 90vh;
+  border-radius: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  border: 4px solid #1e293b;
+  animation: ${slideUp} 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+`;
+
+const MobileTopHeaderBar = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+`;
+
+const MobileHeaderTitleGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+`;
+
+const MobileStatusBadge = styled.span`
+  font-size: 11px;
+  font-weight: 800;
+  color: #1e40af;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 12px;
+  align-self: flex-start;
+`;
+
+const MobileLocationName = styled.h3`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+`;
+
+const MobileAddressSub = styled.span`
+  font-size: 12px;
+  color: #64748b;
+`;
+
+const MobileCloseBtn = styled.button`
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+`;
+
+const MobileActionBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+const ControlGroupLeft = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
+const ControlGroupRight = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
+const CopyAddrBtn = styled.button`
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+`;
+
+const MobileExternalLink = styled.a`
+  background: #fedd13;
+  color: #111827;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(254, 221, 19, 0.35);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f5cf00;
+  }
+`;
+
+const MobileMapContentFrame = styled.div`
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #e2e8f0;
+`;
+
+const MobileBottomPillCard = styled.div`
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+`;
+
+const PillIconLarge = styled.span`
+  font-size: 24px;
+`;
+
+const MobilePillTextContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+`;
+
+const MobilePillTitle = styled.span`
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const MobilePillAddr = styled.span`
+  font-size: 11px;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const MobileBottomCta = styled.a`
+  background: #4285f4;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(66, 133, 244, 0.4);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #2b6cb0;
+  }
 `;

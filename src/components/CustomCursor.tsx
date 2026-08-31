@@ -38,6 +38,9 @@ export const CustomCursor: React.FC = () => {
       isTouchActive = false;
       mouseX = e.clientX;
       mouseY = e.clientY;
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+      }
       updateVisibility(true);
     };
 
@@ -85,9 +88,9 @@ export const CustomCursor: React.FC = () => {
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
       }
-      // Increased lerp speed from 0.1 to 0.22 to reduce visual lag trail
-      ringX = lerp(ringX, mouseX, 0.22);
-      ringY = lerp(ringY, mouseY, 0.22);
+      // Snappy lerp factor for immediate responsivity without slow motion drag
+      ringX = lerp(ringX, mouseX, 0.55);
+      ringY = lerp(ringY, mouseY, 0.55);
       if (ringRef.current) {
         ringRef.current.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
       }
