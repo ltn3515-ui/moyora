@@ -321,6 +321,19 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
     showToast(`'${act.title}' 모임에 참석하셨습니다! 내 모임에서 확인해보세요. 🎉`, 'success', '🎉');
   };
 
+  const handleLocationSelect = (placeName: string, address: string) => {
+    if (selectedActivity) {
+      setSelectedActivity((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          locationName: placeName,
+          locationAddress: address
+        };
+      });
+    }
+  };
+
   return (
     <Overlay onClick={onClose}>
       <ModalCard onClick={(e) => e.stopPropagation()}>
@@ -396,6 +409,7 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
                 locationName={selectedActivity.locationName}
                 address={selectedActivity.locationAddress}
                 height="220px"
+                onSelectLocation={handleLocationSelect}
               />
             </SectionBox>
 

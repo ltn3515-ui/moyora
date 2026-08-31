@@ -12,7 +12,18 @@ interface GoogleMapViewProps {
   showControls?: boolean;
   showSearch?: boolean;
   onSearch?: (query: string) => void;
+  onSelectLocation?: (placeName: string, address: string) => void;
 }
+
+const POPULAR_SPOTS = [
+  { name: '성수 리필스테이션 파크', address: '서울 성동구 연무장길 12' },
+  { name: '성수동 카페거리', address: '서울특별시 성동구 성수이로 78' },
+  { name: '블루보틀 강남 카페', address: '서울특별시 강남구 테헤란로 129' },
+  { name: '여의도 한강공원 여의나루역', address: '서울특별시 영등포구 여의동로 330' },
+  { name: '남산타워 팔각정 광장', address: '서울 용산구 남산공원길 105' },
+  { name: '인사동 아라아트센터', address: '서울 종로구 인사동9길 26' },
+  { name: '홍대 연남동 경의선 숲길', address: '서울특별시 마포구 연남동 242-1' },
+];
 
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   locationName,
@@ -23,23 +34,34 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   zoom: initialZoom = 15,
   showControls = true,
   showSearch = false,
-  onSearch
+  onSearch,
+  onSelectLocation
 }) => {
   const [mapType, setMapType] = useState<'m' | 'k'>('m'); // 'm' = Roadmap, 'k' = Satellite
   const [zoomLevel, setZoomLevel] = useState<number>(initialZoom);
   const [searchInput, setSearchInput] = useState<string>('');
+  const [modalSearchInput, setModalSearchInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
+
+  // 모달 안에서 활성화된 선택 장소
+  const [activeLocName, setActiveLocName] = useState<string>(locationName);
+  const [activeAddr, setActiveAddr] = useState<string>(address || '');
+
   const { showToast } = useToast();
 
-  // Construct search query for Google Maps
-  const query = lat && lng 
-    ? `${lat},${lng}` 
-    : address 
-      ? `${address} (${locationName})`
-      : locationName;
+  // Props 업데이트 시 내부 state 갱신
+  React.useEffect(() => {
+    setActiveLocName(locationName);
+    if (address) setActiveAddr(address);
+  }, [locationName, address]);
 
-  const encodedQuery = encodeURIComponent(query);
+  // Construct search query for Google Maps
+  const currentQuery = activeLocName
+    ? (activeAddr ? `${activeAddr} (${activeLocName})` : activeLocName)
+    : (lat && lng ? `${lat},${lng}` : locationName);
+
+  const encodedQuery = encodeURIComponent(currentQuery);
   const embedUrl = `https://maps.google.com/maps?q=${encodedQuery}&t=${mapType}&z=${zoomLevel}&ie=UTF8&iwloc=&output=embed`;
   const externalMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
 
@@ -59,13 +81,43 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
     }
   };
 
+  const handleModalSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (modalSearchInput.trim()) {
+      setActiveLocName(modalSearchInput.trim());
+      setActiveAddr(`검색된 장소: ${modalSearchInput.trim()}`);
+      setModalSearchInput('');
+      showToast(`'${modalSearchInput.trim()}' 장소 위치를 불러왔습니다! 🗺️`, 'info', '🗺️');
+    }
+  };
+
+  const handleSpotSelect = (spot: { name: string; address: string }) => {
+    setActiveLocName(spot.name);
+    setActiveAddr(spot.address);
+    showToast(`'${spot.name}' 장소가 선택되었습니다!`, 'info', '📍');
+  };
+
+  const handleConfirmLocationSelect = () => {
+    if (onSelectLocation) {
+      onSelectLocation(activeLocName, activeAddr);
+    }
+    showToast(`장소 '${activeLocName}'(으)로 선택 완료되었습니다! 📍`, 'success', '📍');
+    setIsMobileModalOpen(false);
+  };
+
   const handleCopyAddress = () => {
-    const textToCopy = address ? `${locationName} (${address})` : locationName;
+    const textToCopy = activeAddr ? `${activeLocName} (${activeAddr})` : activeLocName;
     navigator.clipboard.writeText(textToCopy).then(() => {
       showToast('주소가 클립보드에 복사되었습니다! 📋', 'success', '📋');
     }).catch(() => {
       showToast('주소 복사에 실패했습니다.', 'error');
     });
+  };
+
+  const handleOpenMapModal = () => {
+    setActiveLocName(locationName);
+    if (address) setActiveAddr(address);
+    setIsMobileModalOpen(true);
   };
 
   return (
@@ -87,7 +139,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
         {/* Google Maps 배지 & 컨트롤 바 */}
         <MapHeaderBar>
-          <GoogleBadge onClick={() => setIsMobileModalOpen(true)} title="모바일 모드로 지도 크게 보기">
+          <GoogleBadge onClick={handleOpenMapModal} title="모달로 지도 크게 보기 & 장소 선택">
             <GoogleGLogo viewBox="0 0 24 24" width="14" height="14">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -99,18 +151,20 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
           </GoogleBadge>
 
           <HeaderControls>
-            {/* 지도 / 위성 모드 전환 */}
+            {/* 지도 버튼 - 클릭 시 지도 모달 오픈 */}
             <TypeToggleBtn
               type="button"
               className={mapType === 'm' ? 'active' : ''}
-              onClick={() => setMapType('m')}
+              onClick={handleOpenMapModal}
+              title="클릭하여 지도 모달 열기 및 장소 선택"
             >
-              지도
+              🗺️ 지도 (모달)
             </TypeToggleBtn>
             <TypeToggleBtn
               type="button"
               className={mapType === 'k' ? 'active' : ''}
-              onClick={() => setMapType('k')}
+              onClick={() => setMapType((prev) => (prev === 'k' ? 'm' : 'k'))}
+              title="위성 모드 전환"
             >
               위성
             </TypeToggleBtn>
@@ -118,10 +172,10 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             {/* 모바일 지도 보기 버튼 */}
             <MobileExpandBtn
               type="button"
-              onClick={() => setIsMobileModalOpen(true)}
-              title="모바일 모드로 지도 확대하기"
+              onClick={handleOpenMapModal}
+              title="모달 모드로 지도 확대 및 장소 선택"
             >
-              📱 모바일 지도
+              📱 지도 모달
             </MobileExpandBtn>
 
             {/* 외부 구글 지도 / 길찾기 링크 */}
@@ -145,15 +199,15 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
         )}
 
         {/* 클릭 가능한 모바일 확대 클릭 힌트 배지 */}
-        <MapClickOverlayHint onClick={() => setIsMobileModalOpen(true)} title="클릭하여 모바일 전용 지도로 보기">
-          <span>📱 지도를 클릭하면 모바일 화면에 맞춰 확대됩니다</span>
+        <MapClickOverlayHint onClick={handleOpenMapModal} title="클릭하여 모달로 크게 보기 & 장소 선택">
+          <span>📱 지도 버튼 클릭 시 모달로 확대 & 장소 선택 가능</span>
           <ExpandArrow>↗</ExpandArrow>
         </MapClickOverlayHint>
 
         {/* 구글 지도 프레임 */}
         <MapFrame
           src={embedUrl}
-          title={`Google Map - ${locationName}`}
+          title={`Google Map - ${activeLocName}`}
           onLoad={() => setIsLoading(false)}
         />
 
@@ -166,29 +220,54 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
             </ZoomControlGroup>
 
-            <LocationPill onClick={() => setIsMobileModalOpen(true)} title="클릭 시 모바일 모드 지도로 확대">
+            <LocationPill onClick={handleOpenMapModal} title="클릭 시 지도 모달 열기">
               <PillIcon>📍</PillIcon>
               <PillInfo>
-                <PillTitle>{locationName} <ClickNoticeBadge>모바일 뷰 ↗</ClickNoticeBadge></PillTitle>
-                {address && <PillAddress>{address}</PillAddress>}
+                <PillTitle>{activeLocName} <ClickNoticeBadge>지도 모달 ↗</ClickNoticeBadge></PillTitle>
+                {activeAddr && <PillAddress>{activeAddr}</PillAddress>}
               </PillInfo>
             </LocationPill>
           </>
         )}
       </MapWrapper>
 
-      {/* 📱 모바일 모드 전용 지도 확답 모달 */}
+      {/* 🗺️ 지도 팝업 모달 & 장소 선택기 */}
       {isMobileModalOpen && (
         <MobileModalOverlay onClick={() => setIsMobileModalOpen(false)}>
           <MobileModalCard onClick={(e) => e.stopPropagation()}>
             <MobileTopHeaderBar>
               <MobileHeaderTitleGroup>
-                <MobileStatusBadge>📱 모바일 맞춤 지도 뷰어</MobileStatusBadge>
-                <MobileLocationName>{locationName}</MobileLocationName>
-                {address && <MobileAddressSub>{address}</MobileAddressSub>}
+                <MobileStatusBadge>🗺️ 구글 지도 & 장소 선택 모달</MobileStatusBadge>
+                <MobileLocationName>{activeLocName}</MobileLocationName>
+                {activeAddr && <MobileAddressSub>{activeAddr}</MobileAddressSub>}
               </MobileHeaderTitleGroup>
               <MobileCloseBtn onClick={() => setIsMobileModalOpen(false)} aria-label="닫기">✕</MobileCloseBtn>
             </MobileTopHeaderBar>
+
+            {/* 모달 내부 장소 검색바 */}
+            <ModalSearchBox onSubmit={handleModalSearchSubmit}>
+              <SearchIcon>🔍</SearchIcon>
+              <ModalSearchInput
+                type="text"
+                placeholder="지도의 원하는 장소/주소 검색..."
+                value={modalSearchInput}
+                onChange={(e) => setModalSearchInput(e.target.value)}
+              />
+              <SearchBtn type="submit">검색</SearchBtn>
+            </ModalSearchBox>
+
+            {/* 추천 장소 핫 칩 리스트 */}
+            <SpotChipScrollRow>
+              {POPULAR_SPOTS.map((spot, idx) => (
+                <SpotChip
+                  key={idx}
+                  className={activeLocName === spot.name ? 'active' : ''}
+                  onClick={() => handleSpotSelect(spot)}
+                >
+                  📍 {spot.name}
+                </SpotChip>
+              ))}
+            </SpotChipScrollRow>
 
             <MobileActionBar>
               <ControlGroupLeft>
@@ -224,27 +303,24 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             <MobileMapContentFrame>
               <MapFrame
                 src={embedUrl}
-                title={`Google Map Mobile View - ${locationName}`}
+                title={`Google Map Modal View - ${activeLocName}`}
               />
-              <ZoomControlGroup style={{ bottom: '88px', right: '16px' }}>
+              <ZoomControlGroup style={{ bottom: '94px', right: '16px' }}>
                 <ZoomBtn type="button" onClick={handleZoomIn} title="확대">+</ZoomBtn>
                 <ZoomDivider />
                 <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
               </ZoomControlGroup>
 
+              {/* 하단 선택 완료 카드 */}
               <MobileBottomPillCard>
                 <PillIconLarge>📍</PillIconLarge>
                 <MobilePillTextContent>
-                  <MobilePillTitle>{locationName}</MobilePillTitle>
-                  <MobilePillAddr>{address || '위치 정보를 확인하세요.'}</MobilePillAddr>
+                  <MobilePillTitle>{activeLocName}</MobilePillTitle>
+                  <MobilePillAddr>{activeAddr || '위치 정보를 확인하세요.'}</MobilePillAddr>
                 </MobilePillTextContent>
-                <MobileBottomCta
-                  href={externalMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  길찾기 ↗
-                </MobileBottomCta>
+                <SelectConfirmBtn type="button" onClick={handleConfirmLocationSelect}>
+                  이 장소 선택 ✨
+                </SelectConfirmBtn>
               </MobileBottomPillCard>
             </MobileMapContentFrame>
           </MobileModalCard>
@@ -823,5 +899,92 @@ const MobileBottomCta = styled.a`
 
   &:hover {
     background: #2b6cb0;
+  }
+`;
+
+/* ── 장소 검색 & 칩 & 선택 버튼 스타일 ── */
+const ModalSearchBox = styled.form`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+const ModalSearchInput = styled.input`
+  flex: 1;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  outline: none;
+  color: #0f172a;
+  background: #ffffff;
+
+  &:focus {
+    border-color: #4285f4;
+  }
+`;
+
+const SpotChipScrollRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const SpotChip = styled.button`
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &.active {
+    background: #fedd13;
+    color: #111827;
+    border-color: #eab308;
+    font-weight: 800;
+  }
+
+  &:hover:not(.active) {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+  }
+`;
+
+const SelectConfirmBtn = styled.button`
+  background: #fedd13;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(254, 221, 19, 0.4);
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f5cf00;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;

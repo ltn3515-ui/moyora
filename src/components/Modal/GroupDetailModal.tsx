@@ -58,6 +58,14 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [isVoteOpen, setIsVoteOpen] = useState(false);
+  const [groupLocName, setGroupLocName] = useState<string>('');
+  const [groupAddr, setGroupAddr] = useState<string>('서울특별시 강남구 테헤란로 101');
+
+  React.useEffect(() => {
+    if (group) {
+      setGroupLocName(group.name);
+    }
+  }, [group]);
 
   if (!isOpen || !group) return null;
 
@@ -68,6 +76,11 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
 
   const handleCreateNotice = () => {
     showToast(`'${group.name}' 모임의 새 공지가 등록되었습니다! 📢`, 'success', '📢');
+  };
+
+  const handleSelectLocation = (locName: string, addr: string) => {
+    setGroupLocName(locName);
+    setGroupAddr(addr);
   };
 
   return (
@@ -176,10 +189,11 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
             </VoteTriggerBtn>
           </LocationHeaderRow>
           <GoogleMapView
-            locationName={group.name}
-            address="서울특별시 강남구 테헤란로 101"
+            locationName={groupLocName || group.name}
+            address={groupAddr}
             height="180px"
             showControls={true}
+            onSelectLocation={handleSelectLocation}
           />
         </SectionBox>
 
