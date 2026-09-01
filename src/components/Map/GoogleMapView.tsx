@@ -15,14 +15,13 @@ interface GoogleMapViewProps {
   onSelectLocation?: (placeName: string, address: string) => void;
 }
 
-const POPULAR_SPOTS = [
-  { name: '성수 리필스테이션 파크', address: '서울 성동구 연무장길 12' },
-  { name: '성수동 카페거리', address: '서울특별시 성동구 성수이로 78' },
-  { name: '블루보틀 강남 카페', address: '서울특별시 강남구 테헤란로 129' },
-  { name: '여의도 한강공원 여의나루역', address: '서울특별시 영등포구 여의동로 330' },
-  { name: '남산타워 팔각정 광장', address: '서울 용산구 남산공원길 105' },
-  { name: '인사동 아라아트센터', address: '서울 종로구 인사동9길 26' },
-  { name: '홍대 연남동 경의선 숲길', address: '서울특별시 마포구 연남동 242-1' },
+const NEARBY_MAP_PINS = [
+  { id: 'pin-01', name: '성수 리필스테이션 파크', address: '서울 성동구 연무장길 12', top: '48%', left: '40%' },
+  { id: 'pin-02', name: '싸다김밥 뚝섬역점', address: '대한민국 서울특별시 성동구 아차산로 46', top: '25%', left: '44%' },
+  { id: 'pin-03', name: '소문난 성수 감자탕', address: '서울특별시 성동구 연무장길 45', top: '58%', left: '56%' },
+  { id: 'pin-04', name: '올리브영 N 성수', address: '서울특별시 성동구 아차산로 13', top: '68%', left: '82%' },
+  { id: 'pin-05', name: '성수근린공원', address: '서울특별시 성동구 성수동2가 273-35', top: '60%', left: '46%' },
+  { id: 'pin-06', name: '일미락 성수점', address: '서울특별시 성동구 상원1길 224', top: '30%', left: '62%' }
 ];
 
 export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
@@ -47,6 +46,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   // 모달 안에서 활성화된 선택 장소
   const [activeLocName, setActiveLocName] = useState<string>(locationName);
   const [activeAddr, setActiveAddr] = useState<string>(address || '');
+  const [showZoomGuideTooltip, setShowZoomGuideTooltip] = useState<boolean>(true);
 
   const { showToast } = useToast();
 
@@ -94,7 +94,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
   const handleSpotSelect = (spot: { name: string; address: string }) => {
     setActiveLocName(spot.name);
     setActiveAddr(spot.address);
-    showToast(`'${spot.name}' 장소가 선택되었습니다!`, 'info', '📍');
+    showToast(`'${spot.name}' 장소가 선택되었습니다! 📍`, 'info', '📍');
   };
 
   const handleConfirmLocationSelect = () => {
@@ -200,7 +200,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
         {/* 클릭 가능한 모바일 확대 클릭 힌트 배지 */}
         <MapClickOverlayHint onClick={handleOpenMapModal} title="클릭하여 모달로 크게 보기 & 장소 선택">
-          <span>📱 지도 버튼 클릭 시 모달로 확대 & 장소 선택 가능</span>
+          <span>📱 지도 클릭 시 모달 오픈 · 손가락 줌 / +,- 로 확대 가능</span>
           <ExpandArrow>↗</ExpandArrow>
         </MapClickOverlayHint>
 
@@ -243,6 +243,12 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               </MobileHeaderTitleGroup>
               <MobileCloseBtn onClick={() => setIsMobileModalOpen(false)} aria-label="닫기">✕</MobileCloseBtn>
             </MobileTopHeaderBar>
+
+            {/* 모바일 지도 확대 조작 가이드 안내 팁 바 */}
+            <MobileZoomNoticeBanner>
+              <NoticeIcon>💡</NoticeIcon>
+              <span><strong>모바일 지도 조작 가이드:</strong> 두 손가락 펼치기(Pinch Zoom) 또는 우측 하단 <strong>+ / -</strong> 버튼을 눌러 지도를 확대·축소하세요.</span>
+            </MobileZoomNoticeBanner>
 
             {/* 모달 내부 장소 검색바 */}
             <ModalSearchBox onSubmit={handleModalSearchSubmit}>
@@ -301,15 +307,44 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             </MobileActionBar>
 
             <MobileMapContentFrame>
+              {/* 구글 지도 iframe */}
               <MapFrame
                 src={embedUrl}
                 title={`Google Map Modal View - ${activeLocName}`}
               />
-              <ZoomControlGroup style={{ bottom: '94px', right: '16px' }}>
-                <ZoomBtn type="button" onClick={handleZoomIn} title="확대">+</ZoomBtn>
-                <ZoomDivider />
-                <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
-              </ZoomControlGroup>
+
+              {/* 지도 내 인터랙티브 핀 오버레이 마커들 (지도상 장소 직접 클릭 가능) */}
+              <InteractivePinOverlayLayer>
+                {NEARBY_MAP_PINS.map((pin) => (
+                  <MapPinMarker
+                    key={pin.id}
+                    style={{ top: pin.top, left: pin.left }}
+                    className={activeLocName === pin.name ? 'selected' : ''}
+                    onClick={() => handleSpotSelect(pin)}
+                    title={`클릭하여 '${pin.name}' 선택하기`}
+                  >
+                    <PinBubble>
+                      <PinIcon>📍</PinIcon>
+                      <PinName>{pin.name}</PinName>
+                    </PinBubble>
+                  </MapPinMarker>
+                ))}
+              </InteractivePinOverlayLayer>
+
+              {/* 오른쪽 하단 줌 조작 가이드 툴팁 배지 & 줌 컨트롤 */}
+              <ZoomGuideControlWrap style={{ bottom: '94px', right: '16px' }}>
+                {showZoomGuideTooltip && (
+                  <ZoomGuideTooltip onClick={() => setShowZoomGuideTooltip(false)}>
+                    <span>🔍 <strong>+ / -</strong>로 지도 확대</span>
+                    <TooltipClose>✕</TooltipClose>
+                  </ZoomGuideTooltip>
+                )}
+                <ZoomControlGroupStyle>
+                  <ZoomBtn type="button" onClick={handleZoomIn} title="지도 확대">+</ZoomBtn>
+                  <ZoomDivider />
+                  <ZoomBtn type="button" onClick={handleZoomOut} title="지도 축소">-</ZoomBtn>
+                </ZoomControlGroupStyle>
+              </ZoomGuideControlWrap>
 
               {/* 하단 선택 완료 카드 */}
               <MobileBottomPillCard>
@@ -987,4 +1022,140 @@ const SelectConfirmBtn = styled.button`
   &:active {
     transform: translateY(0);
   }
+`;
+
+/* ── 모바일 확대 안내 팁 뷰 ── */
+const MobileZoomNoticeBanner = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #eff6ff;
+  border-bottom: 1px solid #dbeafe;
+  padding: 8px 16px;
+  font-size: 11.5px;
+  color: #1e40af;
+  line-height: 1.35;
+
+  strong {
+    color: #1d4ed8;
+  }
+`;
+
+const NoticeIcon = styled.span`
+  font-size: 14px;
+  flex-shrink: 0;
+`;
+
+/* ── 지도 내 인터랙티브 핀 오버레이 레이어 ── */
+const InteractivePinOverlayLayer = styled.div`
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; /* 지도 프레임 기본 스크롤 투과 */
+  z-index: 8;
+`;
+
+const MapPinMarker = styled.div`
+  position: absolute;
+  pointer-events: auto; /* 마커 부분만 클릭 이벤트 발생 */
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  &:hover {
+    transform: translate(-50%, -115%) scale(1.08);
+    z-index: 10;
+  }
+
+  &.selected {
+    transform: translate(-50%, -115%) scale(1.12);
+    z-index: 12;
+  }
+`;
+
+const PinBubble = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid #ffffff;
+
+  ${MapPinMarker}.selected & {
+    background: #1e293b;
+    border-color: #fedd13;
+    box-shadow: 0 0 16px rgba(254, 221, 19, 0.7);
+  }
+`;
+
+const PinIcon = styled.span`
+  font-size: 13px;
+`;
+
+const PinName = styled.span`
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+
+  ${MapPinMarker}.selected & {
+    color: #fedd13;
+  }
+`;
+
+/* ── 줌 조작 안내 툴팁 및 줌 컨트롤 그룹 ── */
+const ZoomGuideControlWrap = styled.div`
+  position: absolute;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+`;
+
+const ZoomGuideTooltip = styled.div`
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(254, 221, 19, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  animation: bounce 2s infinite;
+
+  strong {
+    color: #fedd13;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+`;
+
+const TooltipClose = styled.span`
+  font-size: 10px;
+  color: #94a3b8;
+  padding: 1px 3px;
+
+  &:hover {
+    color: #ffffff;
+  }
+`;
+
+const ZoomControlGroupStyle = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
 `;
