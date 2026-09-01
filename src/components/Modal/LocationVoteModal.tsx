@@ -4,7 +4,7 @@ import { useToast } from '../Toast';
 import { GoogleMapView } from '../Map/GoogleMapView';
 import { AiLocationRecommendModal } from './AiLocationRecommendModal';
 
-interface VoteOption {
+export interface VoteOption {
   id: string;
   name: string;
   address: string;
@@ -16,6 +16,7 @@ interface LocationVoteModalProps {
   isOpen: boolean;
   onClose: () => void;
   groupName: string;
+  onVoteUpdate?: (options: VoteOption[]) => void;
 }
 
 const INITIAL_OPTIONS: VoteOption[] = [
@@ -46,6 +47,7 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
   isOpen,
   onClose,
   groupName,
+  onVoteUpdate,
 }) => {
   const { showToast } = useToast();
   const [options, setOptions] = useState<VoteOption[]>(INITIAL_OPTIONS);
@@ -55,6 +57,13 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
   const [newPlaceAddress, setNewPlaceAddress] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+
+  // 투표 변경 시 부모 컴포넌트에 알림
+  React.useEffect(() => {
+    if (onVoteUpdate) {
+      onVoteUpdate(options);
+    }
+  }, [options, onVoteUpdate]);
 
   const handleAddOptionFromRecommend = (name: string, address: string) => {
     const newOpt: VoteOption = {
@@ -106,10 +115,10 @@ export const LocationVoteModal: React.FC<LocationVoteModalProps> = ({
     );
 
     if (myVoteId === optionId) {
-      showToast('장소 투표가 성공적으로 취소되었습니다.', 'info');
+      showToast('장소 투표가 취소되었습니다. 📌', 'info', '📌');
     } else {
       const target = options.find((o) => o.id === optionId);
-      showToast(`'${target?.name}' 장소에 투표했습니다! 📍`, 'success');
+      showToast(`'${target?.name}' 장소에 투표 완료! 🗳️ 모임 결과에 바로 반영됩니다.`, 'success', '🗳️');
     }
   };
 

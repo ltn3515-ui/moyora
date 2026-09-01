@@ -74,8 +74,9 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
     navigate('/calculate');
   };
 
-  const handleCreateNotice = () => {
-    showToast(`'${group.name}' 모임의 새 공지가 등록되었습니다! 📢`, 'success', '📢');
+  const handleOpenVoteModal = () => {
+    setIsVoteOpen(true);
+    showToast(`📢 '${group.name}' 모임 멤버 (${group.memberCount}명) 전원에게 '장소 투표 🗳️' 참여 메시지 알림이 전송되었습니다!`, 'info', '💬');
   };
 
   const handleSelectLocation = (locName: string, addr: string) => {
@@ -184,7 +185,7 @@ export const GroupDetailModal: React.FC<GroupDetailModalProps> = ({
         <SectionBox>
           <LocationHeaderRow>
             <SectionLabel>📍 모임 만남 장소 (구글 지도)</SectionLabel>
-            <VoteTriggerBtn type="button" onClick={() => setIsVoteOpen(true)}>
+            <VoteTriggerBtn type="button" onClick={handleOpenVoteModal}>
               장소 투표 🗳️
             </VoteTriggerBtn>
           </LocationHeaderRow>

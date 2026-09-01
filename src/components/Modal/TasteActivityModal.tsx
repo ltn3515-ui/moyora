@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { useAppContext } from '../../context/AppContext';
 import { useToast } from '../Toast';
 import { GoogleMapView } from '../Map/GoogleMapView';
+import { LocationVoteModal, type VoteOption } from './LocationVoteModal';
 
 import neoAvatar from '../../assets/neo_avatar.png';
 import frodoAvatar from '../../assets/frodo_avatar.png';
@@ -292,6 +293,30 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
 
   const [selectedActivity, setSelectedActivity] = useState<TasteActivityItem | null>(null);
   const [joinedIds, setJoinedIds] = useState<Record<string, boolean>>({});
+  const [isVoteOpen, setIsVoteOpen] = useState(false);
+  const [voteOptions, setVoteOptions] = useState<VoteOption[]>([
+    {
+      id: 'opt-01',
+      name: '성수동 어니언 카페 ☕',
+      address: '서울특별시 성동구 아차산로9길 8',
+      votes: 4,
+      votedUsers: ['민수', '지은', '현우', '유진'],
+    },
+    {
+      id: 'opt-02',
+      name: '서울숲 야외 피크닉 존 🌳',
+      address: '서울특별시 성동구 뚝섬로 273',
+      votes: 6,
+      votedUsers: ['네오', '프로도', '무지', '콘', '제이지', '튜브'],
+    },
+    {
+      id: 'opt-03',
+      name: '성수 리필스테이션 파크 🌿',
+      address: '서울 성동구 연무장길 12',
+      votes: 5,
+      votedUsers: ['지은', '현우', '콘', '제이지', '이태노'],
+    },
+  ]);
 
   useEffect(() => {
     if (isOpen) {
@@ -331,6 +356,33 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
           locationAddress: address
         };
       });
+    }
+  };
+
+  const handleOpenVoteModal = () => {
+    setIsVoteOpen(true);
+    if (selectedActivity) {
+      const memberCount = selectedActivity.attendees ? selectedActivity.attendees.length : 4;
+      showToast(
+        `📢 '${selectedActivity.title}' 멤버 (${memberCount}명) 전원에게 '장소 투표 🗳️' 참여 메시지 알림이 전송되었습니다!`,
+        'info',
+        '💬'
+      );
+    }
+  };
+
+  const handleVoteUpdate = (newOptions: VoteOption[]) => {
+    setVoteOptions(newOptions);
+  };
+
+  // 가장 많은 표를 받은 옵션 계산
+  const topOption = [...voteOptions].sort((a, b) => b.votes - a.votes)[0];
+  const totalVotes = voteOptions.reduce((sum, opt) => sum + opt.votes, 0);
+
+  const handleApplyTopOption = () => {
+    if (topOption && selectedActivity) {
+      handleLocationSelect(topOption.name, topOption.address);
+      showToast(`🏆 1위 투표 장소 '${topOption.name}'(으)로 모임 장소가 확정 변경되었습니다!`, 'success', '🏆');
     }
   };
 
@@ -399,7 +451,12 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
 
             {/* 지도 뷰어 (실시간 구글 지도 인터랙티브 연동) */}
             <SectionBox>
-              <SectionLabel>📍 모임 장소 & 지도</SectionLabel>
+              <LocationHeaderRow>
+                <SectionLabel>📍 모임 장소 & 지도</SectionLabel>
+                <VoteTriggerBtn type="button" onClick={handleOpenVoteModal}>
+                  장소 투표 🗳️
+                </VoteTriggerBtn>
+              </LocationHeaderRow>
               <LocationTextRow>
                 <strong>{selectedActivity.locationName}</strong>
                 <span>{selectedActivity.locationAddress}</span>
@@ -411,6 +468,58 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
                 height="220px"
                 onSelectLocation={handleLocationSelect}
               />
+            </SectionBox>
+
+            {/* 📊 진행 중인 장소 투표 결과 카카오/모여라 위젯 카드 */}
+            <SectionBox>
+              <SectionLabelRow>
+                <SectionLabel>📊 실시간 장소 투표 현황 ({totalVotes}표 참여중)</SectionLabel>
+                <VoteMoreBtn type="button" onClick={handleOpenVoteModal}>
+                  투표 참여/변경 🗳️
+                </VoteMoreBtn>
+              </SectionLabelRow>
+              <LiveVoteCard>
+                <LiveVoteHeader>
+                  <VoteBadge>투표 진행 중</VoteBadge>
+                  {topOption && (
+                    <TopWinningBadge>
+                      🏆 1위: <strong>{topOption.name}</strong> ({topOption.votes}표)
+                    </TopWinningBadge>
+                  )}
+                </LiveVoteHeader>
+
+                <VoteProgressList>
+                  {voteOptions.map((opt) => {
+                    const percent = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+                    const isTop = topOption && topOption.id === opt.id;
+                    return (
+                      <VoteProgressItem key={opt.id}>
+                        <VoteItemMetaRow>
+                          <OptionTitleGroup>
+                            {isTop && <TopCrown>🏆</TopCrown>}
+                            <OptionNameText className={isTop ? 'top' : ''}>{opt.name}</OptionNameText>
+                          </OptionTitleGroup>
+                          <VotePercentText>
+                            <strong>{opt.votes}표</strong> ({percent}%)
+                          </VotePercentText>
+                        </VoteItemMetaRow>
+                        <ProgressBarBg>
+                          <ProgressBarFill
+                            style={{ width: `${percent}%` }}
+                            className={isTop ? 'top-fill' : ''}
+                          />
+                        </ProgressBarBg>
+                      </VoteProgressItem>
+                    );
+                  })}
+                </VoteProgressList>
+
+                {topOption && (
+                  <ApplyTopPlaceBtn type="button" onClick={handleApplyTopOption}>
+                    🏆 1위 후보('{topOption.name}') 모임 장소로 확정하기 ✨
+                  </ApplyTopPlaceBtn>
+                )}
+              </LiveVoteCard>
             </SectionBox>
 
             {/* 모임 만든 사람 (Host) */}
@@ -474,6 +583,14 @@ export const TasteActivityModal: React.FC<TasteActivityModalProps> = ({
           </DetailContent>
         )}
       </ModalCard>
+
+      {/* 모임 장소 투표 모달 */}
+      <LocationVoteModal
+        isOpen={isVoteOpen}
+        onClose={() => setIsVoteOpen(false)}
+        groupName={selectedActivity?.title || '모여라 모임'}
+        onVoteUpdate={handleVoteUpdate}
+      />
     </Overlay>
   );
 };
@@ -890,5 +1007,174 @@ const JoinBtn = styled.button`
     background: #dcfce7;
     color: #166534;
     box-shadow: none;
+  }
+`;
+
+/* ── 장소 투표 결과 위젯 스타일 ── */
+const LocationHeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+`;
+
+const VoteTriggerBtn = styled.button`
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #7A5C29;
+  background: #FFFBF3;
+  border: 1px solid #F3E4CE;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #FFF6E5;
+    border-color: #E6D2B5;
+    transform: translateY(-1px);
+  }
+`;
+
+const SectionLabelRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const VoteMoreBtn = styled.button`
+  font-size: 11px;
+  font-weight: 800;
+  color: #3b82f6;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const LiveVoteCard = styled.div`
+  background: #FFFDF8;
+  border: 1.5px solid #fedd13;
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(254, 221, 19, 0.2);
+`;
+
+const LiveVoteHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+`;
+
+const VoteBadge = styled.span`
+  background: #fedd13;
+  color: #111827;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+`;
+
+const TopWinningBadge = styled.span`
+  font-size: 11.5px;
+  color: #1e293b;
+  font-weight: 600;
+
+  strong {
+    color: #d97706;
+    font-weight: 800;
+  }
+`;
+
+const VoteProgressList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const VoteProgressItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const VoteItemMetaRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+`;
+
+const OptionTitleGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const TopCrown = styled.span`
+  font-size: 12px;
+`;
+
+const OptionNameText = styled.span`
+  font-weight: 700;
+  color: #334155;
+
+  &.top {
+    font-weight: 800;
+    color: #0f172a;
+  }
+`;
+
+const VotePercentText = styled.span`
+  font-size: 11px;
+  color: #64748b;
+
+  strong {
+    color: #1e293b;
+  }
+`;
+
+const ProgressBarBg = styled.div`
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  width: 100%;
+  overflow: hidden;
+`;
+
+const ProgressBarFill = styled.div`
+  height: 100%;
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+
+  &.top-fill {
+    background: #fedd13;
+  }
+`;
+
+const ApplyTopPlaceBtn = styled.button`
+  margin-top: 4px;
+  width: 100%;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid #eab308;
+  background: #fef08a;
+  color: #713f12;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #fde047;
+    transform: translateY(-1px);
   }
 `;
