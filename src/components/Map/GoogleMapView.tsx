@@ -163,39 +163,39 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
           </GoogleBadge>
 
           <HeaderControls>
-            {/* 지도 버튼 - 클릭 시 지도 모달 오픈 */}
-            <TypeToggleBtn
-              type="button"
-              className={mapType === 'm' ? 'active' : ''}
-              onClick={handleOpenMapModal}
-              title="클릭하여 지도 모달 열기 및 장소 선택"
-            >
-              🗺️ 지도 (모달)
-            </TypeToggleBtn>
-            <TypeToggleBtn
-              type="button"
-              className={mapType === 'k' ? 'active' : ''}
-              onClick={() => setMapType((prev) => (prev === 'k' ? 'm' : 'k'))}
-              title="위성 모드 전환"
-            >
-              위성
-            </TypeToggleBtn>
+            {/* 지도 / 위성 2단 세그먼트 토글 */}
+            <SegmentGroup>
+              <SegmentBtn
+                type="button"
+                className={mapType === 'm' ? 'active' : ''}
+                onClick={() => setMapType('m')}
+              >
+                지도
+              </SegmentBtn>
+              <SegmentBtn
+                type="button"
+                className={mapType === 'k' ? 'active' : ''}
+                onClick={() => setMapType('k')}
+              >
+                위성
+              </SegmentBtn>
+            </SegmentGroup>
 
-            {/* 모바일 지도 보기 버튼 */}
-            <MobileExpandBtn
+            {/* 대표 단일 지도 모달 팝업 버튼 */}
+            <HighlightModalBtn
               type="button"
               onClick={handleOpenMapModal}
-              title="모달 모드로 지도 확대 및 장소 선택"
+              title="지도 크게보기 및 특정 장소 선택"
             >
-              📱 지도 모달
-            </MobileExpandBtn>
+              🗺️ 지도 모달
+            </HighlightModalBtn>
 
-            {/* 외부 구글 지도 / 길찾기 링크 */}
+            {/* 외부 길찾기 링크 */}
             <ExternalLinkHref
               href={externalMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              title="구글 지도 앱에서 길찾기 및 상세보기"
+              title="구글 지도 앱에서 길찾기"
             >
               📍 길찾기 ↗
             </ExternalLinkHref>
@@ -209,12 +209,6 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
             <LoadingText>구글 지도 로딩 중...</LoadingText>
           </LoadingOverlay>
         )}
-
-        {/* 클릭 가능한 모바일 확대 클릭 힌트 배지 */}
-        <MapClickOverlayHint onClick={handleOpenMapModal} title="클릭하여 모달로 크게 보기 & 장소 선택">
-          <span>📱 지도 클릭 시 모달 오픈 · 손가락 줌 / +,- 로 확대 가능</span>
-          <ExpandArrow>↗</ExpandArrow>
-        </MapClickOverlayHint>
 
         {/* 구글 지도 프레임 */}
         <MapFrame
@@ -232,7 +226,7 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
               <ZoomBtn type="button" onClick={handleZoomOut} title="축소">-</ZoomBtn>
             </ZoomControlGroup>
 
-            <LocationPill onClick={handleOpenMapModal} title="클릭 시 지도 모달 열기">
+            <LocationPill onClick={handleOpenMapModal} title="클릭 시 지도 모달 크게보기 & 장소 선택">
               <PillIcon>📍</PillIcon>
               <PillInfo>
                 <PillTitle>{activeLocName} <ClickNoticeBadge>지도 모달 ↗</ClickNoticeBadge></PillTitle>
@@ -289,20 +283,22 @@ export const GoogleMapView: React.FC<GoogleMapViewProps> = ({
 
             <MobileActionBar>
               <ControlGroupLeft>
-                <TypeToggleBtn
-                  type="button"
-                  className={mapType === 'm' ? 'active' : ''}
-                  onClick={() => setMapType('m')}
-                >
-                  지도
-                </TypeToggleBtn>
-                <TypeToggleBtn
-                  type="button"
-                  className={mapType === 'k' ? 'active' : ''}
-                  onClick={() => setMapType('k')}
-                >
-                  위성
-                </TypeToggleBtn>
+                <SegmentGroup>
+                  <SegmentBtn
+                    type="button"
+                    className={mapType === 'm' ? 'active' : ''}
+                    onClick={() => setMapType('m')}
+                  >
+                    지도
+                  </SegmentBtn>
+                  <SegmentBtn
+                    type="button"
+                    className={mapType === 'k' ? 'active' : ''}
+                    onClick={() => setMapType('k')}
+                  >
+                    위성
+                  </SegmentBtn>
+                </SegmentGroup>
               </ControlGroupLeft>
               <ControlGroupRight>
                 <CopyAddrBtn type="button" onClick={handleCopyAddress}>
@@ -499,14 +495,23 @@ const LiveDot = styled.span`
 const HeaderControls = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 `;
 
-const TypeToggleBtn = styled.button`
+const SegmentGroup = styled.div`
+  display: flex;
+  align-items: center;
   background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  color: #475569;
-  padding: 3px 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2px;
+`;
+
+const SegmentBtn = styled.button`
+  background: transparent;
+  border: none;
+  color: #64748b;
+  padding: 4px 10px;
   border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
@@ -514,32 +519,37 @@ const TypeToggleBtn = styled.button`
   transition: all 0.15s ease;
 
   &.active {
-    background: #4285f4;
-    color: #ffffff;
-    border-color: #4285f4;
-    box-shadow: 0 1px 4px rgba(66, 133, 244, 0.3);
+    background: #ffffff;
+    color: #1e293b;
+    font-weight: 800;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   &:hover:not(.active) {
-    background: #e2e8f0;
+    color: #0f172a;
   }
 `;
 
-const MobileExpandBtn = styled.button`
+const HighlightModalBtn = styled.button`
   background: #fedd13;
-  color: #1e293b;
+  color: #111827;
   border: 1px solid #eab308;
-  padding: 3px 9px;
-  border-radius: 6px;
-  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 11.5px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 4px rgba(254, 221, 19, 0.35);
+  box-shadow: 0 2px 6px rgba(254, 221, 19, 0.4);
+  white-space: nowrap;
 
   &:hover {
     background: #f5cf00;
     transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
