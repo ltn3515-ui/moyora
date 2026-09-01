@@ -15,6 +15,18 @@ interface GoogleMapViewProps {
   onSelectLocation?: (placeName: string, address: string) => void;
 }
 
+const POPULAR_SPOTS = [
+  { name: '성수 리필스테이션 파크', address: '서울 성동구 연무장길 12' },
+  { name: '싸다김밥 뚝섬역점', address: '대한민국 서울특별시 성동구 아차산로 46' },
+  { name: '성수동 카페거리', address: '서울특별시 성동구 성수이로 78' },
+  { name: '소문난 성수 감자탕', address: '서울특별시 성동구 연무장길 45' },
+  { name: '블루보틀 강남 카페', address: '서울특별시 강남구 테헤란로 129' },
+  { name: '여의도 한강공원 여의나루역', address: '서울특별시 영등포구 여의동로 330' },
+  { name: '남산타워 팔각정 광장', address: '서울 용산구 남산공원길 105' },
+  { name: '인사동 아라아트센터', address: '서울 종로구 인사동9길 26' },
+  { name: '홍대 연남동 경의선 숲길', address: '서울특별시 마포구 연남동 242-1' },
+];
+
 const NEARBY_MAP_PINS = [
   { id: 'pin-01', name: '성수 리필스테이션 파크', address: '서울 성동구 연무장길 12', top: '48%', left: '40%' },
   { id: 'pin-02', name: '싸다김밥 뚝섬역점', address: '대한민국 서울특별시 성동구 아차산로 46', top: '25%', left: '44%' },
